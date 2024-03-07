@@ -41,7 +41,6 @@ public class ByteOperations {
         int pos = 0;
         for (int position : positions) {
             output[pos++] = get_bit_at(data, position);
-
         }
         return output;
     }

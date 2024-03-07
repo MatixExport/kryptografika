@@ -112,7 +112,7 @@ public class DesEncoder {
             right_data = ByteOperations.byte_arr_xor(ByteOperations.bites_to_bytes(right_data) , subkeys[i]);
 
             byte[] sbox_result = new byte[8];
-
+            System.out.println(ByteOperations.byte_arr_to_string(right_data));
             for (int j = 0; j < 8; j += 1) {
                 byte[] row = ByteOperations.get_bites_at_positions(right_data,new int[] {j*6, j*6 + 5});
                 row = ByteOperations.bites_to_bytes(row);
@@ -120,14 +120,14 @@ public class DesEncoder {
                 column = ByteOperations.bites_to_bytes(column);
                 sbox_result[j] = sBox[j][row[0]][column[0]];
             }
-            System.out.println(ByteOperations.byte_arr_to_string(sbox_result));
+//            System.out.println(ByteOperations.byte_arr_to_string(sbox_result));
             byte[] new_right_data =new byte[4];
             for (int j = 0; j < 8; j+=2) {
                 new_right_data[j/2] = ByteOperations.join_bytes(sbox_result[j],4,sbox_result[j+1]);
             }
-            if((i == 0)||(i == 1)){
-                System.out.println(ByteOperations.byte_arr_to_string(new_right_data));
-            }
+//            if((i == 0)||(i == 1)){
+//                System.out.println(ByteOperations.byte_arr_to_string(new_right_data));
+//            }
             right_data = ByteOperations.byte_arr_xor(left_data , new_right_data);
             left_data = temp_right_data;
         }
@@ -141,46 +141,6 @@ public class DesEncoder {
         return output;
     }
 
-    public static byte[] decode(byte[] key, byte[] data){
-        byte[][] subkeys = get_subkeys(key);
-        byte[] left_data = new byte[data.length/2];
-        byte[] right_data = new byte[data.length/2];
-
-
-        System.arraycopy(data,0,left_data,0,data.length/2);
-        System.arraycopy(data,data.length/2,right_data,0,data.length/2);
-
-//        left_data = ByteOperations.bites_to_bytes(left_data);
-//        right_data = ByteOperations.bites_to_bytes(right_data);
-
-        for (int i = 15; i > 0; i--) {
-            System.out.println("Round:" + i);
-            byte[] temp_right_data = right_data;
-
-            right_data = ByteOperations.get_bites_at_positions(right_data,r_permutation_table);
-            right_data = ByteOperations.byte_arr_xor(ByteOperations.bites_to_bytes(right_data) , subkeys[i]);
-
-            byte[] sbox_result = new byte[8];
-            for (int j = 0; j < 8; j += 1) {
-                byte[] row = ByteOperations.get_bites_at_positions(right_data,new int[] {j*6, j*6 + 5});
-                row = ByteOperations.bites_to_bytes(row);
-                byte[] column = ByteOperations.get_bites_at_positions(right_data,new int[] {j*6 + 1, j*6 + 2,j*6 + 3,j*6 + 4});
-                column = ByteOperations.bites_to_bytes(column);
-                sbox_result[j] += sBox[j][row[0]][column[0]];
-            }
-            for (int j = 0; j < 8; j+=2) {
-                right_data[j/2] = ByteOperations.join_bytes(sbox_result[j],4,sbox_result[j+1]);
-            }
-
-            right_data = ByteOperations.byte_arr_xor(left_data , right_data);
-            left_data = temp_right_data;
-        }
-//        System.out.println(Arrays.toString(left_data));
-//        System.out.println(Arrays.toString(right_data));
-        System.out.println(ByteOperations.byte_arr_to_hex(right_data));
-        System.out.println(ByteOperations.byte_arr_to_hex(left_data));
-        return right_data;
-    }
 
 
 
