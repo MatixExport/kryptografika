@@ -73,7 +73,7 @@ class ByteOperationsTest {
         valid_right_data = ByteOperations.bites_to_bytes(valid_right_data);
         right_data = ByteOperations.bites_to_bytes(right_data);
         right_data = ByteOperations.get_bites_at_positions(right_data,r_permutation_table);
-
+        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bites_to_bytes(right_data)));
         for (int i = 0; i < valid_right_data.length ; i++) {
             assertEquals(valid_right_data[i],right_data[i]);
 

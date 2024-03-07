@@ -92,6 +92,10 @@ public class DesEncoder {
         //JEST RACZEJ DOBRZE
         return subkeys;
     }
+
+//    public static byte[] sBlock() {
+//
+//    }
     public static byte[] encode(byte[] key,byte[] data){
         byte[][] subkeys = get_subkeys(key);
         byte[] left_data = new byte[data.length/2];
@@ -131,10 +135,7 @@ public class DesEncoder {
             right_data = ByteOperations.byte_arr_xor(left_data , new_right_data);
             left_data = temp_right_data;
         }
-//        System.out.println(Arrays.toString(left_data));
-//        System.out.println(Arrays.toString(right_data));
-//        System.out.println(ByteOperations.byte_arr_to_hex(right_data));
-//        System.out.println(ByteOperations.byte_arr_to_hex(left_data));
+
         byte [] output = new byte[8];
         System.arraycopy(right_data,0,output,0,4);
         System.arraycopy(left_data,0,output,4,4);
