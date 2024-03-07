@@ -1,4 +1,5 @@
 package indie.outsource;
+import java.math.BigInteger;
 
 import static java.lang.Math.ceil;
 
@@ -107,6 +108,9 @@ public class ByteOperations {
         output += in2;
 
         return output;
+    }
+    public static String byte_arr_to_hex(byte[] in){
+        return new BigInteger(1, in).toString(16);
     }
 
 

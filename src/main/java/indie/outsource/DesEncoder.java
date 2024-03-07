@@ -61,17 +61,18 @@ public class DesEncoder {
         final int[] SHIFTS = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
         byte[] active_part_of_key = ByteOperations.get_bytes_at_positions(key,first_key_filter);
-        System.out.println(active_part_of_key.length);
+//        System.out.println(active_part_of_key.length);
         byte[] first_key_half = new byte[active_part_of_key.length/2];
         byte[] second_key_half = new byte[active_part_of_key.length/2];
-        System.out.println("Aktiv");
-        System.out.println(ByteOperations.byte_arr_to_string(active_part_of_key));
+//        System.out.println("Aktiv");
+//        System.out.println(ByteOperations.byte_arr_to_string(active_part_of_key));
 
         System.arraycopy(active_part_of_key,0,first_key_half,0,active_part_of_key.length/2);
         System.arraycopy(active_part_of_key,active_part_of_key.length/2,second_key_half,0,active_part_of_key.length/2);
 
 
         byte[][] subkeys = new byte[16][];
+
 
         for(int i=0; i<16; i++){
 //            System.out.println("FIrst key half");
@@ -104,6 +105,7 @@ public class DesEncoder {
         right_data = ByteOperations.bites_to_bytes(right_data);
 
         for (int i = 0; i < 16; i++) {
+            System.out.println("Round:" + i);
             byte[] temp_right_data = right_data;
 
             right_data = ByteOperations.get_bites_at_positions(right_data,r_permutation_table);
@@ -123,12 +125,20 @@ public class DesEncoder {
             for (int j = 0; j < 8; j+=2) {
                 new_right_data[j/2] = ByteOperations.join_bytes(sbox_result[j],4,sbox_result[j+1]);
             }
-            right_data = ByteOperations.byte_arr_xor(ByteOperations.bites_to_bytes(left_data) , right_data);
+            if((i == 0)||(i == 1)){
+                System.out.println(ByteOperations.byte_arr_to_string(new_right_data));
+            }
+            right_data = ByteOperations.byte_arr_xor(left_data , new_right_data);
             left_data = temp_right_data;
         }
-        System.out.println(Arrays.toString(left_data));
-        System.out.println(Arrays.toString(right_data));
-        return right_data;
+//        System.out.println(Arrays.toString(left_data));
+//        System.out.println(Arrays.toString(right_data));
+//        System.out.println(ByteOperations.byte_arr_to_hex(right_data));
+//        System.out.println(ByteOperations.byte_arr_to_hex(left_data));
+        byte [] output = new byte[8];
+        System.arraycopy(right_data,0,output,0,4);
+        System.arraycopy(left_data,0,output,4,4);
+        return output;
     }
 
     public static byte[] decode(byte[] key, byte[] data){
