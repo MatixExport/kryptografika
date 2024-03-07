@@ -52,17 +52,15 @@ class ByteOperationsTest {
     }
     @Test
     void test_subkey_generation() {
-        byte[] xd = new byte[]{0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1};
+        byte[] secretKey = "qwertyui".getBytes();
 
-        ByteOperations.bites_to_bytes(xd);
-        DesEncoder encoder = new DesEncoder(xd);
+        byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
 
-        for (byte[] i : encoder.get_subkeys(xd)) {
-            System.out.println(ByteOperations.byte_arr_to_string(i));
-        }
-        System.out.println(Arrays.toString(encoder.encode(xd, new byte[]{
-                0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        })));
+        System.out.println(Arrays.toString(
+                DesEncoder.decode(xd,
+                DesEncoder.encode(xd, new byte[]{
+                        0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1, 1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1
+        }))));
 
     }
 
