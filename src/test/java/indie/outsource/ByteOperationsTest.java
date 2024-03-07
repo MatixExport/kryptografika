@@ -10,14 +10,14 @@ class ByteOperationsTest {
 
     @Test
     void test(){
-        assertEquals(0, ByteOperations.get_bit_at(new byte[]{10},0));
-        assertEquals(1, ByteOperations.get_bit_at(new byte[]{10},1));
-        assertEquals(0, ByteOperations.get_bit_at(new byte[]{10},2));
-        assertEquals(1, ByteOperations.get_bit_at(new byte[]{10},3));
+        assertEquals(0, ByteOperations.get_byte_at(new byte[]{10},0));
+        assertEquals(1, ByteOperations.get_byte_at(new byte[]{10},1));
+        assertEquals(0, ByteOperations.get_byte_at(new byte[]{10},2));
+        assertEquals(1, ByteOperations.get_byte_at(new byte[]{10},3));
     }
     @Test
     void test2(){
-        byte[] tested = ByteOperations.get_bites_at_positions(new byte[]{10},new int[]{0,1,2,3});
+        byte[] tested = ByteOperations.get_bytes_at_positions(new byte[]{10},new int[]{0,1,2,3});
         assertEquals(0, tested[0]);
         assertEquals(1, tested[1]);
         assertEquals(0, tested[2]);
@@ -25,8 +25,8 @@ class ByteOperationsTest {
     }
     @Test
     void test3(){
-        byte[] tested = ByteOperations.get_bites_at_positions(new byte[]{10},new int[]{0,1,2,3});
-        byte[] tested2 = ByteOperations.get_bites_at_positions(new byte[]{10},new int[]{0,1,2,3});
+        byte[] tested = ByteOperations.get_bytes_at_positions(new byte[]{10},new int[]{0,1,2,3});
+        byte[] tested2 = ByteOperations.get_bytes_at_positions(new byte[]{10},new int[]{0,1,2,3});
 
         System.out.println(Arrays.toString(tested));
         System.out.println(Arrays.toString(ByteOperations.join_tables(tested, tested2)));
@@ -59,8 +59,10 @@ class ByteOperationsTest {
 
         for (byte[] i : encoder.get_subkeys(xd)) {
             System.out.println(ByteOperations.byte_arr_to_string(i));
-
-    }
+        }
+        System.out.println(Arrays.toString(encoder.encode(xd, new byte[]{
+                0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        })));
 
     }
 

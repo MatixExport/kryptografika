@@ -1,18 +1,11 @@
 package indie.outsource;
 
-import java.util.Arrays;
-
 import static java.lang.Math.ceil;
 
 public class ByteOperations {
 
-    public static byte get_bit_at(byte[] data, int position) {
-        return data[position-1];
-//        int byte_position = position / 8;
-//        int bit_position = position % 8;
-//        byte selected_byte = data[byte_position];
-//        int bit_value = selected_byte >> bit_position & 1;
-//        return (byte) bit_value;
+    public static byte get_byte_at(byte[] data, int position) {
+        return data[position];
     }
     public static byte get_bit_at(byte[] data, int position) {
         int byte_position = position / 8;
@@ -33,6 +26,15 @@ public class ByteOperations {
         data[byte_position] |= (byte) (1 << bit_position);
     }
 
+    public static byte[] get_bytes_at_positions(byte[] data, int[] positions) {
+        byte[] output = new byte[positions.length];
+        int pos = 0;
+        for (int position : positions) {
+            output[pos++] = get_byte_at(data, position);
+
+        }
+        return output;
+    }
     public static byte[] get_bites_at_positions(byte[] data, int[] positions) {
         byte[] output = new byte[positions.length];
         int pos = 0;
