@@ -14,6 +14,14 @@ public class ByteOperations {
 //        int bit_value = selected_byte >> bit_position & 1;
 //        return (byte) bit_value;
     }
+    public static byte get_bit_at(byte[] data, int position) {
+        int byte_position = position / 8;
+        int bit_position = position % 8;
+        byte selected_byte = data[byte_position];
+        int bit_value = selected_byte >> bit_position & 1;
+        return (byte) bit_value;
+    }
+
     public static void set_bit_at_index(byte[] data, int position,int value) {
         int byte_position = position / 8;
         int bit_position = position % 8;
@@ -81,6 +89,21 @@ public class ByteOperations {
 
             set_bit_at_index(output,position++,ch == '1' ? 1:0);
         }
+        return output;
+    }
+    public static byte[] byte_arr_xor(byte[] in1, byte[] in2){
+        byte[] output = new byte[in1.length];
+        for (int i = 0; i < in1.length; i++) {
+            output[i] = (byte) (in1[i] ^ in2[i]);
+
+        }
+        return output;
+    }
+    public static byte join_bytes(byte in1,int len1, byte in2){
+        byte output;
+        output = (byte) ( in1 << len1);
+        output += in2;
+
         return output;
     }
 
