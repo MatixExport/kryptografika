@@ -57,7 +57,7 @@ class ByteOperationsTest {
         ByteOperations.bites_to_bytes(xd);
         DesEncoder encoder = new DesEncoder(xd);
 
-        for (byte[] i : encoder.get_subkeys()) {
+        for (byte[] i : encoder.get_subkeys(xd)) {
             System.out.println(ByteOperations.byte_arr_to_string(i));
 
     }
