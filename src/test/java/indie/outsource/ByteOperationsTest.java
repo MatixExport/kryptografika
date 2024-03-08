@@ -38,6 +38,7 @@ class ByteOperationsTest {
         String wasd = "0000111100101010101010";
         System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.byte_string_to_byte(wasd)));
     }
+
     @Test
     void test_set_bit_at(){
         byte[] bytesArray = new byte[1];
@@ -70,10 +71,10 @@ class ByteOperationsTest {
        byte[] valid_right_data = new byte[]{
                1,1,0,0,0,1
        };
-        valid_right_data = ByteOperations.bites_to_bytes(valid_right_data);
-        right_data = ByteOperations.bites_to_bytes(right_data);
+        valid_right_data = ByteOperations.bits_to_bytes(valid_right_data);
+        right_data = ByteOperations.bits_to_bytes(right_data);
         right_data = ByteOperations.get_bites_at_positions(right_data,r_permutation_table);
-        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bites_to_bytes(right_data)));
+        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(right_data)));
         for (int i = 0; i < valid_right_data.length ; i++) {
             assertEquals(valid_right_data[i],right_data[i]);
 
@@ -81,6 +82,11 @@ class ByteOperationsTest {
     }
     @Test
     void test_subkey_generation() throws Exception {
+
+        byte[] uf = new byte[]{0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,1,1,1};
+        System.out.println(Arrays.toString(ByteOperations.bits_to_bytes(uf)));
+        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(uf)));
+
         byte[] secretKey = "qwertyui".getBytes();
 
         byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
@@ -99,8 +105,8 @@ class ByteOperationsTest {
                         0b00000001, 0b00100011, 0b01000101, 0b01100111, (byte) 0b10001001, (byte) 0b10101011, (byte) 0b11001101, (byte) 0b11101111});
               dead = encoder.decrypt(dead);
 
-              System.out.println(ByteOperations.byte_arr_to_hex(dead));
-            System.out.println(ByteOperations.byte_arr_to_string(dead));
+//              System.out.println(ByteOperations.byte_arr_to_hex(dead));
+//            System.out.println(ByteOperations.byte_arr_to_string(dead));
 
     }
 

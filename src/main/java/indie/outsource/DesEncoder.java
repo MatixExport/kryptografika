@@ -1,7 +1,5 @@
 package indie.outsource;
 
-import java.util.Arrays;
-
 public class DesEncoder {
 //    private byte[] key;
     static final byte[][][] sBox =
@@ -87,7 +85,9 @@ public class DesEncoder {
 
             byte[] new_filtered_key = ByteOperations.get_bytes_at_positions(new_key,second_key_filter);
 
-            subkeys[i] = ByteOperations.bites_to_bytes(new_filtered_key);
+            subkeys[i] = ByteOperations.bits_to_bytes(new_filtered_key);
+//            System.out.println("KEY:"+i);
+//            System.out.println(ByteOperations.byte_arr_to_string(subkeys[i]));
         }
         //JEST RACZEJ DOBRZE
         return subkeys;
@@ -105,23 +105,28 @@ public class DesEncoder {
         System.arraycopy(data,0,left_data,0,data.length/2);
         System.arraycopy(data,data.length/2,right_data,0,data.length/2);
 
-        left_data = ByteOperations.bites_to_bytes(left_data);
-        right_data = ByteOperations.bites_to_bytes(right_data);
+        left_data = ByteOperations.bits_to_bytes(left_data);
+        right_data = ByteOperations.bits_to_bytes(right_data);
+
+//        System.out.println("Just Split:");
+//        System.out.println(ByteOperations.byte_arr_to_string(right_data));
 
         for (int i = 0; i < 16; i++) {
             System.out.println("Round:" + i);
             byte[] temp_right_data = right_data;
 
             right_data = ByteOperations.get_bites_at_positions(right_data,r_permutation_table);
-            right_data = ByteOperations.byte_arr_xor(ByteOperations.bites_to_bytes(right_data) , subkeys[i]);
+            System.out.println("Sblock we:");
+            System.out.println(ByteOperations.byte_arr_to_string(right_data));
+            right_data = ByteOperations.byte_arr_xor(ByteOperations.bits_to_bytes(right_data) , subkeys[i]);
 
             byte[] sbox_result = new byte[8];
-            System.out.println(ByteOperations.byte_arr_to_string(right_data));
+
             for (int j = 0; j < 8; j += 1) {
                 byte[] row = ByteOperations.get_bites_at_positions(right_data,new int[] {j*6, j*6 + 5});
-                row = ByteOperations.bites_to_bytes(row);
+                row = ByteOperations.bits_to_bytes(row);
                 byte[] column = ByteOperations.get_bites_at_positions(right_data,new int[] {j*6 + 1, j*6 + 2,j*6 + 3,j*6 + 4});
-                column = ByteOperations.bites_to_bytes(column);
+                column = ByteOperations.bits_to_bytes(column);
                 sbox_result[j] = sBox[j][row[0]][column[0]];
             }
 //            System.out.println(ByteOperations.byte_arr_to_string(sbox_result));

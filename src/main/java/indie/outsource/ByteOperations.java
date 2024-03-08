@@ -1,7 +1,9 @@
 package indie.outsource;
 import java.math.BigInteger;
+import java.util.*;
 
 import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
 
 public class ByteOperations {
 
@@ -61,15 +63,33 @@ public class ByteOperations {
         return output;
     }
 
-    public static byte[] bites_to_bytes(byte[] in){
+    public static byte[] bits_to_bytes(byte[] in){
+        //teraz bity są ustawione tak jak się je czyta
+        //czyli najmniejsze są po prawo
+        //zrobiłem tak bo wcześniej java traktowała
+        //nasze przekonwertowane {0,0,0,0,0,0,0,1}
+        //jako -128 zamiast 1
         int new_len = (int) ceil((double) in.length / 8);
 
         byte[] output = new byte[new_len];
 
         for (int i=0;i<in.length;i++){
-            set_bit_at_index(output,i,in[i]);
+            set_bit_at_index(output,in.length -i -1,in[i]);
         }
+        //jest 4 rano i już nie chce mi się nawet myśleć
+        //jak to optymalnie zrobić
+        output = reverseArr(output);
+
         return output;
+    }
+    public static byte[] reverseArr(byte[] arr){
+        byte temp;
+        for (int i = 0; i < (int) (arr.length / 2); i++) {
+            temp = arr[i];
+            arr[i] = arr[arr.length - i - 1];
+            arr[arr.length - i - 1] = temp;
+        }
+        return arr;
     }
     public static String byte_to_string(byte value){
         return  String.format("%8s", Integer.toBinaryString(value & 0xFF)).replace(' ', '0');

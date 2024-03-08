@@ -75,9 +75,9 @@ public class StolenEncoder
             throw new Exception("Część wiadomości nie ma 8 bajtów długości");
         }
         System.out.println("Hubert:");
-        System.out.println(ByteOperations.byte_arr_to_string(theMsg));
+//        System.out.println(ByteOperations.byte_arr_to_string(theMsg));
         byte[] r = computeRightBlock(theMsg);
-        System.out.println(ByteOperations.byte_arr_to_string(r));
+//        System.out.println(ByteOperations.byte_arr_to_string(r));
         byte[] l = computeLeftBlock(theMsg);
         for (int k = 0; k < 16; k++)
         {
@@ -107,6 +107,8 @@ public class StolenEncoder
         }
 
         byte[] r = computeRightBlock(theMsg);
+        System.out.println("Bercik right block");
+        System.out.println(ByteOperations.byte_arr_to_string(r));
         byte[] l = computeLeftBlock(theMsg);
         int numOfSubKeys = subKeys.length;
         for (int k = 0; k < numOfSubKeys; k++)
@@ -141,6 +143,8 @@ public class StolenEncoder
             d = Auxx.rotateLeft(d, halfKeySize, SHIFTS[k]);
             byte[] cd = joinBlocks(c, halfKeySize, d, halfKeySize);
             subKeysLocal[k] = Auxx.selectBits(cd, PC2);
+//            System.out.println("KEY:"+k);
+//            System.out.println(ByteOperations.byte_arr_to_string(subKeysLocal[k]));
         }
         return subKeysLocal;
     }
@@ -268,7 +272,10 @@ public class StolenEncoder
     {
         byte row;
         byte col;
+//        System.out.println("Sblock bercik:");
+//        System.out.println(ByteOperations.byte_arr_to_string(data));
         data = create6BitData(data);
+
         byte[] result = new byte[data.length / 2];
         byte lowerHalfByte = 0;
         byte halfByte;
