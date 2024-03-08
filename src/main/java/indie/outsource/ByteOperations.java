@@ -1,9 +1,7 @@
 package indie.outsource;
 import java.math.BigInteger;
-import java.util.*;
 
 import static java.lang.Math.ceil;
-import static java.lang.Math.floor;
 
 public class ByteOperations {
 
@@ -38,7 +36,7 @@ public class ByteOperations {
         }
         return output;
     }
-    public static byte[] get_bites_at_positions(byte[] data, int[] positions) {
+    public static byte[] get_bits_at_positions(byte[] data, int[] positions) {
         byte[] output = new byte[positions.length];
         int pos = 0;
         for (int position : positions) {
@@ -114,6 +112,8 @@ public class ByteOperations {
         return output;
     }
     public static byte[] byte_arr_xor(byte[] in1, byte[] in2){
+        System.out.println(in1.length);
+        System.out.println(in2.length);
         byte[] output = new byte[in1.length];
         for (int i = 0; i < in1.length; i++) {
             output[i] = (byte) (in1[i] ^ in2[i]);

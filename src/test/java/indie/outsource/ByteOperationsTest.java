@@ -52,6 +52,21 @@ class ByteOperationsTest {
         System.out.println(ByteOperations.byte_to_string(bytesArray[0]));
     }
     @Test
+    void get_bits_at_positions_test(){
+        int[] positions = new int[] {8};
+        byte[] data = new byte[]{
+                0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1,
+                1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1
+        };
+        byte[] data_in_bytes = ByteOperations.bits_to_bytes(data);
+        byte[] bits_in_positions = ByteOperations.get_bits_at_positions(data_in_bytes,positions);
+        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(bits_in_positions)));
+        //coś tu jest nie tak
+
+
+
+    }
+    @Test
     void test_permutation_table(){
        byte[] data = new byte[]{
                 0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1,
@@ -73,7 +88,7 @@ class ByteOperationsTest {
        };
         valid_right_data = ByteOperations.bits_to_bytes(valid_right_data);
         right_data = ByteOperations.bits_to_bytes(right_data);
-        right_data = ByteOperations.get_bites_at_positions(right_data,r_permutation_table);
+        right_data = ByteOperations.get_bits_at_positions(right_data,r_permutation_table);
         System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(right_data)));
         for (int i = 0; i < valid_right_data.length ; i++) {
             assertEquals(valid_right_data[i],right_data[i]);

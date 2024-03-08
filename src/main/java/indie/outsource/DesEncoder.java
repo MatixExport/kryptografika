@@ -115,17 +115,18 @@ public class DesEncoder {
             System.out.println("Round:" + i);
             byte[] temp_right_data = right_data;
 
-            right_data = ByteOperations.get_bites_at_positions(right_data,r_permutation_table);
+            right_data = ByteOperations.get_bits_at_positions(right_data,r_permutation_table);
+            right_data = ByteOperations.bits_to_bytes(right_data);
+            right_data = ByteOperations.byte_arr_xor(right_data , subkeys[i]);
             System.out.println("Sblock we:");
             System.out.println(ByteOperations.byte_arr_to_string(right_data));
-            right_data = ByteOperations.byte_arr_xor(ByteOperations.bits_to_bytes(right_data) , subkeys[i]);
 
             byte[] sbox_result = new byte[8];
 
             for (int j = 0; j < 8; j += 1) {
-                byte[] row = ByteOperations.get_bites_at_positions(right_data,new int[] {j*6, j*6 + 5});
+                byte[] row = ByteOperations.get_bits_at_positions(right_data,new int[] {j*6, j*6 + 5});
                 row = ByteOperations.bits_to_bytes(row);
-                byte[] column = ByteOperations.get_bites_at_positions(right_data,new int[] {j*6 + 1, j*6 + 2,j*6 + 3,j*6 + 4});
+                byte[] column = ByteOperations.get_bits_at_positions(right_data,new int[] {j*6 + 1, j*6 + 2,j*6 + 3,j*6 + 4});
                 column = ByteOperations.bits_to_bytes(column);
                 sbox_result[j] = sBox[j][row[0]][column[0]];
             }
