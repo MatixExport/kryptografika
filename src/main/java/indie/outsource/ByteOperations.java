@@ -24,7 +24,7 @@ public class ByteOperations {
         int byte_position = position / 8;
         int bit_position = position % 8;
         byte selected_byte = data[byte_position];
-        int bit_value = selected_byte >> (7 - bit_position) & 1;
+        int bit_value = (selected_byte >> (7 - bit_position)) & 1;
         return (byte) bit_value;
     }
 
@@ -38,6 +38,17 @@ public class ByteOperations {
         }
         data[byte_position] |= (byte) (1 << bit_position);
     }
+    public static void set_bit_at_index_little_endian(byte[] data, int position,int value) {
+        int byte_position = position / 8;
+        int bit_position = position % 8;
+        byte selected_byte = data[byte_position];
+        if(value == 0){
+            data[byte_position]  &= (byte) ~(1 << (7- bit_position));
+            return;
+        }
+        data[byte_position] |= (byte) (1 << (7 - bit_position));
+    }
+
 
     public static byte[] get_bytes_at_positions(byte[] data, int[] positions) {
         byte[] output = new byte[positions.length];
@@ -100,6 +111,16 @@ public class ByteOperations {
 
         return output;
     }
+    public static byte[] bits_to_bytes_little_endian(byte[] in){
+        int new_len = (int) ceil((double) in.length / 8);
+        byte[] output = new byte[new_len];
+
+        for (int i=0;i<in.length;i++){
+            set_bit_at_index_little_endian(output,i,in[i]);
+        }
+
+        return output;
+    }
     public static byte[] reverseArr(byte[] arr){
         byte temp;
         for (int i = 0; i < (int) (arr.length / 2); i++) {
@@ -109,6 +130,7 @@ public class ByteOperations {
         }
         return arr;
     }
+
     public static String byte_to_string(byte value){
         return  String.format("%8s", Integer.toBinaryString(value & 0xFF)).replace(' ', '0');
     }

@@ -11,6 +11,7 @@ public class StolenEncoder
 
     String s_key;
     byte[] b_key = new byte[] {0b00010011, 0b00110100, 0b01010111, 0b01111001, (byte) 0b10011011, (byte) 0b10111100,0b1011111, (byte) 0b11110001};
+
     byte[][] subKeys;
     byte[] shift = {1, 3, 5, 7, 0, 2, 4, 6};
     final byte[] pBlock = {16, 7, 20, 21, 29, 12, 28, 17, 1, 15, 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27, 3, 9, 19, 13, 30, 6, 22, 11, 4, 25};

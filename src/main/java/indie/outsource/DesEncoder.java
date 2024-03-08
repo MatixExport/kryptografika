@@ -1,5 +1,8 @@
 package indie.outsource;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class DesEncoder {
 //    private byte[] key;
     static final byte[][][] sBox =
@@ -59,11 +62,9 @@ public class DesEncoder {
         final int[] SHIFTS = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
         byte[] active_part_of_key = ByteOperations.get_bytes_at_positions(key,first_key_filter);
-//        System.out.println(active_part_of_key.length);
         byte[] first_key_half = new byte[active_part_of_key.length/2];
         byte[] second_key_half = new byte[active_part_of_key.length/2];
-//        System.out.println("Aktiv");
-//        System.out.println(ByteOperations.byte_arr_to_string(active_part_of_key));
+
 
         System.arraycopy(active_part_of_key,0,first_key_half,0,active_part_of_key.length/2);
         System.arraycopy(active_part_of_key,active_part_of_key.length/2,second_key_half,0,active_part_of_key.length/2);
@@ -73,11 +74,6 @@ public class DesEncoder {
 
 
         for(int i=0; i<16; i++){
-//            System.out.println("FIrst key half");
-//            System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bites_to_bytes( first_key_half)));
-//            System.out.println("Second key half");
-//            System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bites_to_bytes(second_key_half)));
-
             first_key_half = ByteOperations.rotate_left(first_key_half,SHIFTS[i]);
             second_key_half = ByteOperations.rotate_left(second_key_half,SHIFTS[i]);
 
@@ -86,59 +82,39 @@ public class DesEncoder {
             byte[] new_filtered_key = ByteOperations.get_bytes_at_positions(new_key,second_key_filter);
 
             subkeys[i] = ByteOperations.bits_to_bytes(new_filtered_key);
-//            System.out.println("KEY:"+i);
-//            System.out.println(ByteOperations.byte_arr_to_string(subkeys[i]));
         }
-        //JEST RACZEJ DOBRZE
         return subkeys;
     }
 
-//    public static byte[] sBlock() {
-//
-//    }
-    public static byte[] encode(byte[] key,byte[] data){
-        byte[][] subkeys = get_subkeys(key);
+    public static byte[] sBlock(byte[] right_data) {
+        byte[] sbox_result = new byte[8];
+
+        for (int j = 0; j < 8; j += 1) {
+            byte[] row = ByteOperations.get_bits_at_positions(right_data,new int[] {j*6, j*6 + 5});
+            row = ByteOperations.bits_to_bytes(row);
+            byte[] column = ByteOperations.get_bits_at_positions(right_data,new int[] {j*6 + 1, j*6 + 2,j*6 + 3,j*6 + 4});
+            column = ByteOperations.bits_to_bytes(column);
+            sbox_result[j] = sBox[j][row[0]][column[0]];
+        }
+        byte[] new_right_data =new byte[4];
+        for (int j = 0; j < 8; j+=2) {
+            new_right_data[j/2] = ByteOperations.join_bytes(sbox_result[j],4,sbox_result[j+1]);
+        }
+        return new_right_data;
+    }
+    public static byte[] encrypt(byte[][] subkeys,byte[] data){
         byte[] left_data = new byte[data.length/2];
         byte[] right_data = new byte[data.length/2];
 
-        
         System.arraycopy(data,0,left_data,0,data.length/2);
         System.arraycopy(data,data.length/2,right_data,0,data.length/2);
 
-        left_data = ByteOperations.bits_to_bytes(left_data);
-        right_data = ByteOperations.bits_to_bytes(right_data);
-
-        System.out.println("Just Split:");
-        System.out.println(ByteOperations.byte_arr_to_string(right_data));
-
         for (int i = 0; i < 16; i++) {
-            System.out.println("Round:" + i);
             byte[] temp_right_data = right_data;
-
-            right_data = ByteOperations.get_bits_at_positions(right_data,r_permutation_table);
+            right_data = ByteOperations.get_bits_at_positions_berlin(right_data,r_permutation_table);
             right_data = ByteOperations.bits_to_bytes(right_data);
-            System.out.println("WEWE POST MUTATION:");
-            System.out.println(ByteOperations.byte_arr_to_string(right_data));
             right_data = ByteOperations.byte_arr_xor(right_data , subkeys[i]);
-
-
-            byte[] sbox_result = new byte[8];
-
-            for (int j = 0; j < 8; j += 1) {
-                byte[] row = ByteOperations.get_bits_at_positions(right_data,new int[] {j*6, j*6 + 5});
-                row = ByteOperations.bits_to_bytes(row);
-                byte[] column = ByteOperations.get_bits_at_positions(right_data,new int[] {j*6 + 1, j*6 + 2,j*6 + 3,j*6 + 4});
-                column = ByteOperations.bits_to_bytes(column);
-                sbox_result[j] = sBox[j][row[0]][column[0]];
-            }
-//            System.out.println(ByteOperations.byte_arr_to_string(sbox_result));
-            byte[] new_right_data =new byte[4];
-            for (int j = 0; j < 8; j+=2) {
-                new_right_data[j/2] = ByteOperations.join_bytes(sbox_result[j],4,sbox_result[j+1]);
-            }
-//            if((i == 0)||(i == 1)){
-//                System.out.println(ByteOperations.byte_arr_to_string(new_right_data));
-//            }
+            byte[] new_right_data = sBlock(right_data);
             right_data = ByteOperations.byte_arr_xor(left_data , new_right_data);
             left_data = temp_right_data;
         }
@@ -147,6 +123,16 @@ public class DesEncoder {
         System.arraycopy(right_data,0,output,0,4);
         System.arraycopy(left_data,0,output,4,4);
         return output;
+    }
+    public static byte[] encode(byte[] key,byte[] data){
+        byte[][] subkeys = get_subkeys(key);
+        return encrypt(subkeys,data);
+    }
+
+    public static byte[] decode(byte[] key,byte[] data){
+        byte[][] subkeys = get_subkeys(key);
+        Collections.reverse(Arrays.asList(subkeys));
+        return encrypt(subkeys,data);
     }
 
 
