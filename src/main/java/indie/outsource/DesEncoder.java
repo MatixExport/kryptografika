@@ -108,8 +108,8 @@ public class DesEncoder {
         left_data = ByteOperations.bits_to_bytes(left_data);
         right_data = ByteOperations.bits_to_bytes(right_data);
 
-//        System.out.println("Just Split:");
-//        System.out.println(ByteOperations.byte_arr_to_string(right_data));
+        System.out.println("Just Split:");
+        System.out.println(ByteOperations.byte_arr_to_string(right_data));
 
         for (int i = 0; i < 16; i++) {
             System.out.println("Round:" + i);
@@ -117,9 +117,10 @@ public class DesEncoder {
 
             right_data = ByteOperations.get_bits_at_positions(right_data,r_permutation_table);
             right_data = ByteOperations.bits_to_bytes(right_data);
-            right_data = ByteOperations.byte_arr_xor(right_data , subkeys[i]);
-            System.out.println("Sblock we:");
+            System.out.println("WEWE POST MUTATION:");
             System.out.println(ByteOperations.byte_arr_to_string(right_data));
+            right_data = ByteOperations.byte_arr_xor(right_data , subkeys[i]);
+
 
             byte[] sbox_result = new byte[8];
 

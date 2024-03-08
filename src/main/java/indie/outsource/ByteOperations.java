@@ -16,6 +16,18 @@ public class ByteOperations {
         return (byte) bit_value;
     }
 
+    //ja już nie wiem jak to ma działać
+    //zakładamy że bit 0 jest od lewej
+    //tak ci z berlina zrobili
+    //?chyba?
+    public static byte get_bit_at_berlin(byte[] data, int position) {
+        int byte_position = position / 8;
+        int bit_position = position % 8;
+        byte selected_byte = data[byte_position];
+        int bit_value = selected_byte >> (7 - bit_position) & 1;
+        return (byte) bit_value;
+    }
+
     public static void set_bit_at_index(byte[] data, int position,int value) {
         int byte_position = position / 8;
         int bit_position = position % 8;
@@ -41,6 +53,14 @@ public class ByteOperations {
         int pos = 0;
         for (int position : positions) {
             output[pos++] = get_bit_at(data, position);
+        }
+        return output;
+    }
+    public static byte[] get_bits_at_positions_berlin(byte[] data, int[] positions) {
+        byte[] output = new byte[positions.length];
+        int pos = 0;
+        for (int position : positions) {
+            output[pos++] = get_bit_at_berlin(data, position);
         }
         return output;
     }
@@ -112,8 +132,6 @@ public class ByteOperations {
         return output;
     }
     public static byte[] byte_arr_xor(byte[] in1, byte[] in2){
-        System.out.println(in1.length);
-        System.out.println(in2.length);
         byte[] output = new byte[in1.length];
         for (int i = 0; i < in1.length; i++) {
             output[i] = (byte) (in1[i] ^ in2[i]);

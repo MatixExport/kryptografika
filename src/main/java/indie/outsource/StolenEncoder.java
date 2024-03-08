@@ -75,17 +75,32 @@ public class StolenEncoder
             throw new Exception("Część wiadomości nie ma 8 bajtów długości");
         }
         System.out.println("Hubert:");
-//        System.out.println(ByteOperations.byte_arr_to_string(theMsg));
-        byte[] r = computeRightBlock(theMsg);
+//        byte[] r = computeRightBlock(theMsg);
+//        System.out.println("Bercik right block");
 //        System.out.println(ByteOperations.byte_arr_to_string(r));
-        byte[] l = computeLeftBlock(theMsg);
+
+        byte[] l = new byte[theMsg.length/2];
+        byte[] r = new byte[theMsg.length/2];
+
+
+        System.arraycopy(theMsg,0,l,0,theMsg.length/2);
+        System.arraycopy(theMsg,theMsg.length/2,r,0,theMsg.length/2);
+
+//        l = ByteOperations.bits_to_bytes(l);
+//        r = ByteOperations.bits_to_bytes(r);
+
+
+//        byte[] l = computeLeftBlock(theMsg);
         for (int k = 0; k < 16; k++)
         {
             byte[] rBackup = r;
+            System.out.println("BERCIK PRE EXTENDED:");
+            System.out.println(ByteOperations.byte_arr_to_string(r));
             r = computeExtendedBlock(r);
-
+            System.out.println("POST MUTATION BERCIK:");
             r = Auxx.XORBytes(r, subKeys[k]);
-
+            System.out.println(ByteOperations.byte_arr_to_string(r));
+            System.out.println("POST POST MUTATION");
             r = sBlocks(r);
 
             r = Auxx.selectBits(r, pBlock);
@@ -94,7 +109,12 @@ public class StolenEncoder
 
             l = rBackup;
         }
-        byte[] lr = computeResultBlock(l, r);
+//        byte[] lr = computeResultBlock(l, r);
+        byte[] lr = new byte[l.length + r.length];
+
+        System.arraycopy(r,0,lr,0,r.length);
+        System.arraycopy(l,0,lr,r.length,l.length);
+
         return lr;
     }
 
@@ -106,10 +126,12 @@ public class StolenEncoder
             throw new Exception("Część wiadomości nie ma 8 bajtów długości");
         }
 
-        byte[] r = computeRightBlock(theMsg);
-        System.out.println("Bercik right block");
-        System.out.println(ByteOperations.byte_arr_to_string(r));
-        byte[] l = computeLeftBlock(theMsg);
+        byte[] l = new byte[theMsg.length/2];
+        byte[] r = new byte[theMsg.length/2];
+
+
+        System.arraycopy(theMsg,0,l,0,theMsg.length/2);
+        System.arraycopy(theMsg,theMsg.length/2,r,0,theMsg.length/2);
         int numOfSubKeys = subKeys.length;
         for (int k = 0; k < numOfSubKeys; k++)
         {
@@ -121,7 +143,10 @@ public class StolenEncoder
             r = Auxx.XORBytes(l, r);
             l = rBackup;
         }
-        byte[] lr = computeResultBlock(l, r);
+        byte[] lr = new byte[l.length + r.length];
+
+        System.arraycopy(r,0,lr,0,r.length);
+        System.arraycopy(l,0,lr,r.length,l.length);
         return lr;
     }
 
@@ -211,6 +236,8 @@ public class StolenEncoder
 
     private byte[] computeExtendedBlock(byte[] block)
     {
+        System.out.println("BERCIK PERMUTATION BLOCK:");
+        System.out.println(ByteOperations.byte_arr_to_string(block));
         byte extendedBlock[] = new byte[6];
         short current;
         byte pBit = 31;
@@ -272,8 +299,8 @@ public class StolenEncoder
     {
         byte row;
         byte col;
-//        System.out.println("Sblock bercik:");
-//        System.out.println(ByteOperations.byte_arr_to_string(data));
+        System.out.println("Sblock bercik:");
+        System.out.println(ByteOperations.byte_arr_to_string(data));
         data = create6BitData(data);
 
         byte[] result = new byte[data.length / 2];

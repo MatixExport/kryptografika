@@ -44,23 +44,51 @@ class ByteOperationsTest {
         byte[] bytesArray = new byte[1];
         byte testByte = 0;
         bytesArray[0] = testByte;
+
         ByteOperations.set_bit_at_index(bytesArray,3,1);
         System.out.println(ByteOperations.byte_to_string(bytesArray[0]));
         ByteOperations.set_bit_at_index(bytesArray,5,1);
         System.out.println(ByteOperations.byte_to_string(bytesArray[0]));
         ByteOperations.set_bit_at_index(bytesArray,5,0);
         System.out.println(ByteOperations.byte_to_string(bytesArray[0]));
+        ByteOperations.set_bit_at_index(bytesArray,5,0);
+        System.out.println(ByteOperations.byte_to_string(bytesArray[0]));
     }
     @Test
     void get_bits_at_positions_test(){
-        int[] positions = new int[] {8};
+        int[] positions = new int[] {0,1,2,3,4,5,6,7};
         byte[] data = new byte[]{
-                0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1,
-                1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1
+                0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1,1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1
+
         };
         byte[] data_in_bytes = ByteOperations.bits_to_bytes(data);
+        System.out.println(ByteOperations.byte_arr_to_string(data_in_bytes));
         byte[] bits_in_positions = ByteOperations.get_bits_at_positions(data_in_bytes,positions);
         System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(bits_in_positions)));
+
+        byte[] data2 = new byte[]{0,0,0,0,1,1,1,1};
+
+        byte[] data2_in_bytes = ByteOperations.bits_to_bytes(data2);
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,0));
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,1));
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,2));
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,3));
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,4));
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,5));
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,6));
+        System.out.println(ByteOperations.get_bit_at_berlin(data2_in_bytes,7));
+
+        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.get_bits_at_positions_berlin(data2_in_bytes,positions)));
+
+
+//        System.out.println(ByteOperations.byte_arr_to_string(data2_in_bytes));
+//        System.out.println(ByteOperations.get_bit_at(data2_in_bytes,7));
+//        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.get_bits_at_positions(data2_in_bytes,positions)));
+//
+//        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(ByteOperations.get_bits_at_positions(data2_in_bytes,positions))));
+        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(ByteOperations.get_bits_at_positions_berlin(data2_in_bytes,positions))));
+
+
         //coś tu jest nie tak
 
 
@@ -121,7 +149,7 @@ class ByteOperationsTest {
               dead = encoder.decrypt(dead);
 
 //              System.out.println(ByteOperations.byte_arr_to_hex(dead));
-//            System.out.println(ByteOperations.byte_arr_to_string(dead));
+            System.out.println(ByteOperations.byte_arr_to_string(dead));
 
     }
 
