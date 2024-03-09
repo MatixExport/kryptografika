@@ -133,9 +133,10 @@ class ByteOperationsTest {
 
 
               byte[] redemption = DesEncoder.encode(xd,ByteOperations.bits_to_bytes(new byte[]{
-                      0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1, 1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1}))
-                      ;
+                      0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1, 1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1}))  ;
 
+            System.out.println(ByteOperations.byte_arr_to_string(redemption));
+            System.out.println("AAAA");
               redemption = DesEncoder.decode(xd,redemption);
               System.out.println(ByteOperations.byte_arr_to_string(redemption));
 
