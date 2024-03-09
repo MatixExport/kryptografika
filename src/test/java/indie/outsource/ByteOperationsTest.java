@@ -124,23 +124,22 @@ class ByteOperationsTest {
     void test_subkey_generation() throws Exception {
 
         byte[] uf = new byte[]{0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,1,1,1};
-        System.out.println(Arrays.toString(ByteOperations.bits_to_bytes(uf)));
-        System.out.println(ByteOperations.byte_arr_to_string(ByteOperations.bits_to_bytes(uf)));
+
 
         byte[] secretKey = "qwertyui".getBytes();
 
         byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
 
 
-        StolenEncoder encoder = new StolenEncoder();
-
-
-              byte[] redemption = DesEncoder.encode(xd,ByteOperations.bits_to_bytes(new byte[]{
-                      0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1, 1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1}))  ;
-
-            System.out.println(ByteOperations.byte_arr_to_string(redemption));
-            System.out.println("AAAA");
+        byte [] og_msg = ByteOperations.bits_to_bytes(new byte[]{
+                      0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1, 1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1});
+        System.out.println("Oryginalna Wiadomość");
+        System.out.println(ByteOperations.byte_arr_to_string(og_msg));
+        byte[] redemption = DesEncoder.encode(xd,og_msg)  ;
+            System.out.println("Zaszyfrowana wiadomość:");
+            System.out.println(ByteOperations.byte_arr_to_hex(redemption));
               redemption = DesEncoder.decode(xd,redemption);
+              System.out.println("Odszyfrowana wiadomość:");
               System.out.println(ByteOperations.byte_arr_to_string(redemption));
 
     }
