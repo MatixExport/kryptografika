@@ -1,4 +1,4 @@
-package indie.outsource;
+package indie.outsource.model;
 import java.lang.*;
 public class StolenEncoder
 {   class DESKeyException extends Exception

@@ -1,6 +1,4 @@
-package indie.outsource;
-
-import java.util.Arrays;
+package indie.outsource.model;
 
 public class Main {
     public static void main(String[] args) {

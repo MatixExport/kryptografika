@@ -1,4 +1,4 @@
-package indie.outsource;
+package indie.outsource.model;
 import java.math.BigInteger;
 
 import static java.lang.Math.ceil;

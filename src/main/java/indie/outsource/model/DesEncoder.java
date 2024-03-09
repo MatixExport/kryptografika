@@ -1,4 +1,4 @@
-package indie.outsource;
+package indie.outsource.model;
 
 import java.util.Arrays;
 import java.util.Collections;
