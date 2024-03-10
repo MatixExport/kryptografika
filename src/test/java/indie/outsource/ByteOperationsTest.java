@@ -2,10 +2,12 @@ package indie.outsource;
 
 import indie.outsource.model.ByteOperations;
 import indie.outsource.model.DesEncoder;
+import indie.outsource.model.DesxEncoder;
 import indie.outsource.model.StolenEncoder;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -129,11 +131,17 @@ class ByteOperationsTest {
         byte[] secretKey = "qwertyui".getBytes();
 
         byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
+        byte[] xd2 = new byte[]{1,1,0,1, 0,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,1,1, 1,0,0,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
+        byte[] xd3 = new byte[]{1,0,0,1, 1,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 1,1,0,0, 0,1,0,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,0,1, 1,0,1,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
+
+
+
 
 
         byte [] og_msg = ByteOperations.bits_to_bytes(new byte[]{
-                      0,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1, 1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1});
+                      1,1,1,1, 1,1,1,1, 0,0,1,0, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,0, 0,1,1,1, 1,0,0,0, 1,0,0,1, 1,0,1,0, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,0, 1,1,1,1});
         System.out.println("Oryginalna Wiadomość");
+        System.out.println(ByteOperations.byte_arr_to_hex(og_msg));
         System.out.println(ByteOperations.byte_arr_to_string(og_msg));
         byte[] redemption = DesEncoder.encode(xd,og_msg)  ;
             System.out.println("Zaszyfrowana wiadomość:");
@@ -141,6 +149,19 @@ class ByteOperationsTest {
               redemption = DesEncoder.decode(xd,redemption);
               System.out.println("Odszyfrowana wiadomość:");
               System.out.println(ByteOperations.byte_arr_to_string(redemption));
+
+
+
+        System.out.println("DESX OG");
+        System.out.println(ByteOperations.byte_arr_to_string(og_msg));
+        byte[] k1 = ByteOperations.bits_to_bytes(xd2);
+        byte[] k2 = ByteOperations.bits_to_bytes(xd3);
+        byte[] redemption2 = DesxEncoder.encode(xd,k1,k2,og_msg);
+        System.out.println("Zaszyfrowana wiadomość:");
+        System.out.println(ByteOperations.byte_arr_to_hex(redemption2));
+        redemption2 = DesxEncoder.decode(xd,k1,k2,redemption2);
+        System.out.println("Odszyfrowana wiadomość:");
+        System.out.println(ByteOperations.byte_arr_to_string(redemption2));
 
     }
 

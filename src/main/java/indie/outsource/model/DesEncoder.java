@@ -113,15 +113,11 @@ public class DesEncoder {
     }
 
     public static byte[] sBlock(byte[] right_data) {
-//        System.out.println("BEFORE PERMU");
-//        System.out.println(ByteOperations.byte_arr_to_string(right_data));
         byte[] sbox_result = new byte[8];
 
         for (int j = 0; j < 8; j += 1) {
             byte[] row = ByteOperations.get_bits_at_positions_berlin(right_data,new int[] {j*6, j*6 + 5});
-            row = ByteOperations.bits_to_bytes(row);
             byte[] column = ByteOperations.get_bits_at_positions_berlin(right_data,new int[] {j*6 + 1, j*6 + 2,j*6 + 3,j*6 + 4});
-            column = ByteOperations.bits_to_bytes(column);
             sbox_result[j] = sBox[j][row[0]][column[0]];
         }
         byte[] new_right_data =new byte[4];
@@ -134,7 +130,6 @@ public class DesEncoder {
     public static byte[] encrypt(byte[][] subkeys,byte[] data){
 
         data = ByteOperations.get_bits_at_positions_berlin(data,hardware_start_permutation_table);
-        data = ByteOperations.bits_to_bytes(data);
 
         byte[] left_data = new byte[data.length/2];
         byte[] right_data = new byte[data.length/2];
@@ -146,14 +141,11 @@ public class DesEncoder {
             byte[] temp_right_data = right_data;
 
             right_data = ByteOperations.get_bits_at_positions_berlin(right_data,r_permutation_table);
-            right_data = ByteOperations.bits_to_bytes(right_data);
             right_data = ByteOperations.byte_arr_xor(right_data , subkeys[i]);
             byte[] new_right_data = sBlock(right_data);
             //w wykładzie tego nie było
             //natomiast jest to w berlinie i teraz nam się zgadza hash z nimi
             new_right_data = ByteOperations.get_bits_at_positions_berlin(new_right_data,p_permutation_table);
-            new_right_data = ByteOperations.bits_to_bytes(new_right_data);
-//            System.out.println(ByteOperations.byte_arr_to_string(new_right_data));
             right_data = ByteOperations.byte_arr_xor(left_data ,new_right_data);
             left_data = temp_right_data;
         }
@@ -162,7 +154,6 @@ public class DesEncoder {
         System.arraycopy(right_data,0,output,0,4);
         System.arraycopy(left_data,0,output,4,4);
         output = ByteOperations.get_bits_at_positions_berlin(output,hardware_end_permutation_table);
-        output= ByteOperations.bits_to_bytes(output);
         return output;
     }
     public static byte[] encode(byte[] key,byte[] data){

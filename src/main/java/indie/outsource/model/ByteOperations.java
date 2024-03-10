@@ -73,7 +73,7 @@ public class ByteOperations {
         for (int position : positions) {
             output[pos++] = get_bit_at_berlin(data, position);
         }
-        return output;
+        return bits_to_bytes(output);
     }
 
     public static byte[] rotate_left(byte[] data, int step) {
