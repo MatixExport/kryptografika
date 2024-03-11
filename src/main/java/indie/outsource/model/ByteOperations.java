@@ -1,5 +1,6 @@
 package indie.outsource.model;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 import static java.lang.Math.ceil;
 
@@ -171,6 +172,62 @@ public class ByteOperations {
     public static String byte_arr_to_hex(byte[] in){
         return new BigInteger(1, in).toString(16);
     }
+
+
+    public static byte[][] split_into_packages(byte[] content){
+        int len = (content.length / 8) + 1;
+        int supplement = content.length % 8;
+        byte[][] packages = new byte[len][8];
+
+        int i = 0;
+//        int octet = 0;
+        while(i < content.length){
+            packages[i/8][i % 8] = content[i];
+            i++;
+//            if(i == 8){
+//                octet+=1;
+//            }
+        }
+        int supplement_int = 8 - supplement;
+        for (int j = i % 8; j < 8; j++) {
+            packages[i/8][j] = (byte) supplement_int;
+        }
+        return packages;
+    }
+    public static byte[] join_byte_arr(byte[][] arrays){
+        byte[] output = new byte[arrays.length * arrays[0].length];
+        for (int i = 0; i < arrays.length * arrays[0].length; i++) {
+            output[i] = arrays[i/8][i%8];
+        }
+        return output;
+    }
+    public static byte[][] package_encrypted_msg(byte[] msg){
+        int len = msg.length / 8;
+        byte[][] output = new byte[len][8];
+        for (int i = 0; i < len; i++) {
+            output[i] = Arrays.copyOfRange(msg,i ,i+8);
+        }
+        return output;
+    }
+    public static boolean check_n_last_bytes(byte[] byte_package,int n,int value){
+        int len  = byte_package.length;
+        boolean valid = true;
+        for (int i = len-1; i >= len-n; i--) {
+            valid = (byte_package[i] == (byte) value);
+        }
+        return valid;
+    }
+    public static byte[] unpackage_msg(byte[][] packages){
+        int last_byte = packages[packages.length-1][7];
+        int size = packages.length * 8 - last_byte;
+        byte[] output = new byte[size+1];
+        for (int i = 0; i < size; i++) {
+            int octet = i / 8;
+            output[i] = packages[octet][i % 8];
+        }
+        return output;
+    }
+
 
 
 }

@@ -1,5 +1,8 @@
 package indie.outsource.View;
 
+import indie.outsource.model.ByteOperations;
+import indie.outsource.model.DesEncoder;
+import indie.outsource.model.DesxEncoder;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -12,6 +15,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -32,6 +36,10 @@ public class ViewMainController {
     private byte[] data2;
     private boolean is_file1_loaded = false;
     private boolean is_file2_loaded = false;
+
+    byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
+    byte[] xd2 = new byte[]{1,1,0,1, 0,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,1,1, 1,0,0,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
+    byte[] xd3 = new byte[]{1,0,0,1, 1,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 1,1,0,0, 0,1,0,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,0,1, 1,0,1,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
 
 
     public void load_file_1(ActionEvent event) {
@@ -82,6 +90,27 @@ public class ViewMainController {
             if(!is_file1_loaded){
                 load_file_1(event); //przekazanie tu eventa to kolejny peek programing
             }
+
+            byte[] k1 = ByteOperations.bits_to_bytes(xd2);
+            byte[] k2 = ByteOperations.bits_to_bytes(xd3);
+            byte[][] packages = ByteOperations.split_into_packages(data1);
+
+
+            for (int i = 0; i < packages.length; i++) {
+
+                packages[i] = DesEncoder.encode(xd,packages[i]);
+            }
+            System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
+            System.out.println(ByteOperations.byte_arr_to_string(packages[0]));
+            data2 =ByteOperations.join_byte_arr(packages);
+
+//            System.out.println(ByteOperations.byte_arr_to_string(data2));
+            file_binary_2.setText(new String(data2));
+
+
+
+
+
         }
         else{
             data1 = file_binary_1.getText().getBytes(StandardCharsets.UTF_8);    //czy aby na pewno?
@@ -93,9 +122,20 @@ public class ViewMainController {
 
     public void decode(ActionEvent event) {
         if(file_mode){
-            if(!is_file2_loaded){
-                load_file_2(event); //przekazanie tu eventa to kolejny peek programing
+//            if(!is_file2_loaded){
+//                load_file_2(event); //przekazanie tu eventa to kolejny peek programing
+//            }
+//            System.out.println(ByteOperations.byte_arr_to_string(data2));
+            byte[][] packages = ByteOperations.package_encrypted_msg(data2);
+            for (int i = 0; i < packages.length; i++) {
+                System.out.println(ByteOperations.byte_arr_to_string(packages[i]));
+                System.out.println(packages[i].length);
+                    packages[i] = DesEncoder.decode(xd,packages[i]);
             }
+//            data1 = ByteOperations.unpackage_msg(packages);
+
+            file_binary_1.setText(new String(data1));
+
         }
         else{
             data2 = file_binary_2.getText().getBytes(StandardCharsets.UTF_8);    //czy aby na pewno?
