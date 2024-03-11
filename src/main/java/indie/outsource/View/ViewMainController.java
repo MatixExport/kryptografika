@@ -84,39 +84,50 @@ public class ViewMainController {
             throw new RuntimeException(e);
         }
     }
+    public byte[][] get_all_keys(){
+        return new byte[][]{xd,ByteOperations.bits_to_bytes(xd2),ByteOperations.bits_to_bytes(xd3)};
+    }
+    public byte[] pack_and_encode(byte[] content){
+        byte[][] keys = get_all_keys();
+        byte[][] packages = ByteOperations.split_into_packages(content);
+        for (int i = 0; i < packages.length; i++) {
+            packages[i] = DesEncoder.encode(xd,packages[i]);
+        }
+        System.out.println("LAST ENCODED:");
+        System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
+        byte[] temp = ByteOperations.join_byte_arr(packages);
+        System.out.println("FULL ENCODED:");
+        System.out.println(ByteOperations.byte_arr_to_string(temp));
+        return temp;
+    }
+    public byte[] decrypt_and_unpack(byte[] content){
+        byte[][] keys = get_all_keys();
+        System.out.println("FULL recived:");
+        System.out.println(ByteOperations.byte_arr_to_string(content));
+        byte[][] packages = ByteOperations.package_encrypted_msg(content);
+        System.out.println("LAST RECIVED TO DECODE:");
+        System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
+        for (int i = 0; i < packages.length; i++) {
+            packages[i] = DesEncoder.decode(xd,packages[i]);
+        }
 
+        return ByteOperations.unpackage_msg(packages);
+
+    }
     public void encode(ActionEvent event) {
         if(file_mode){
             if(!is_file1_loaded){
                 load_file_1(event); //przekazanie tu eventa to kolejny peek programing
             }
-
-            byte[] k1 = ByteOperations.bits_to_bytes(xd2);
-            byte[] k2 = ByteOperations.bits_to_bytes(xd3);
-            byte[][] packages = ByteOperations.split_into_packages(data1);
-
-
-            for (int i = 0; i < packages.length; i++) {
-
-                packages[i] = DesEncoder.encode(xd,packages[i]);
-            }
-            System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
-            System.out.println(ByteOperations.byte_arr_to_string(packages[0]));
-            data2 =ByteOperations.join_byte_arr(packages);
-
-//            System.out.println(ByteOperations.byte_arr_to_string(data2));
+            data2 = pack_and_encode(data1);
             file_binary_2.setText(new String(data2));
-
-
-
-
 
         }
         else{
-            data1 = file_binary_1.getText().getBytes(StandardCharsets.UTF_8);    //czy aby na pewno?
+            data1 = file_binary_1.getText().getBytes();    //czy aby na pewno?
         }
-
-        //encoder.encode()
+        data2 = pack_and_encode(data1);
+        file_binary_2.setText(new String(data2));
 
     }
 
@@ -126,23 +137,18 @@ public class ViewMainController {
 //                load_file_2(event); //przekazanie tu eventa to kolejny peek programing
 //            }
 //            System.out.println(ByteOperations.byte_arr_to_string(data2));
-            byte[][] packages = ByteOperations.package_encrypted_msg(data2);
-            for (int i = 0; i < packages.length; i++) {
-                System.out.println(ByteOperations.byte_arr_to_string(packages[i]));
-                System.out.println(packages[i].length);
-                    packages[i] = DesEncoder.decode(xd,packages[i]);
-            }
-//            data1 = ByteOperations.unpackage_msg(packages);
-
+            data1 = decrypt_and_unpack(data2);
             file_binary_1.setText(new String(data1));
-
         }
         else{
-            data2 = file_binary_2.getText().getBytes(StandardCharsets.UTF_8);    //czy aby na pewno?
+            data2 = file_binary_2.getText().getBytes();    //czy aby na pewno?
+//            System.out.println("ALO!");
+//            System.out.println(new String(data2));
+//            System.out.println(ByteOperations.byte_arr_to_string(data2));
         }
 
-        //encoder.encode()
-
+        data1 = decrypt_and_unpack(data2);
+        file_binary_1.setText(new String(data1));
     }
 
     public void generate_keys(ActionEvent event) {

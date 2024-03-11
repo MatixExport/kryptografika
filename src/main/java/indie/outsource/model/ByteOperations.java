@@ -180,13 +180,9 @@ public class ByteOperations {
         byte[][] packages = new byte[len][8];
 
         int i = 0;
-//        int octet = 0;
         while(i < content.length){
             packages[i/8][i % 8] = content[i];
             i++;
-//            if(i == 8){
-//                octet+=1;
-//            }
         }
         int supplement_int = 8 - supplement;
         for (int j = i % 8; j < 8; j++) {
@@ -205,7 +201,7 @@ public class ByteOperations {
         int len = msg.length / 8;
         byte[][] output = new byte[len][8];
         for (int i = 0; i < len; i++) {
-            output[i] = Arrays.copyOfRange(msg,i ,i+8);
+            System.arraycopy(msg, i * 8, output[i], 0, 8);
         }
         return output;
     }
@@ -219,8 +215,8 @@ public class ByteOperations {
     }
     public static byte[] unpackage_msg(byte[][] packages){
         int last_byte = packages[packages.length-1][7];
-        int size = packages.length * 8 - last_byte;
-        byte[] output = new byte[size+1];
+        int size = (packages.length * 8) - last_byte;
+        byte[] output = new byte[size];
         for (int i = 0; i < size; i++) {
             int octet = i / 8;
             output[i] = packages[octet][i % 8];
