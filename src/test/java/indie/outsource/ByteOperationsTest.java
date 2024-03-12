@@ -4,11 +4,15 @@ import indie.outsource.model.ByteOperations;
 import indie.outsource.model.DesEncoder;
 import indie.outsource.model.DesxEncoder;
 import indie.outsource.model.StolenEncoder;
+import org.junit.Assert;
+import java.util.Base64;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.plaf.basic.BasicButtonUI;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
+import indie.outsource.View.ViewMainController;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -293,6 +297,11 @@ class ByteOperationsTest {
         }
     }
     @Test
+    void byte_conversion_test(){
+        byte[] test = new byte[]{0b00001111, (byte) 0b100011110, (byte) 0b10001111,0b01111111,0b00011111,0b00001111,0b00001111,0b00001111,8,8,8,8,8,8,8,8};
+        System.out.println(ByteOperations.byte_arr_to_string(new String(test, StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8)));
+    }
+    @Test
     void test_subkey_generation() throws Exception {
 
         byte[] uf = new byte[]{0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,1,1,1};
@@ -332,6 +341,26 @@ class ByteOperationsTest {
         redemption2 = DesxEncoder.decode(xd,k1,k2,redemption2);
         System.out.println("Odszyfrowana wiadomość:");
         System.out.println(ByteOperations.byte_arr_to_string(redemption2));
+
+    }
+    @Test
+    void test_des(){
+        byte [] msg = new byte[]{0,0,0,0,0,0,0,0};
+        byte[] xd = new byte[]{1,0,0,0,0 ,0,0,0, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1};
+        assertEquals("95a8d72813daa94d",ByteOperations.byte_arr_to_hex(DesEncoder.encode(xd,msg)));
+    }
+    @Test
+    void test_cipher_to_text_conversion(){
+        byte test = (byte) 0b10100000;
+        byte [] msg = new byte[]{0,0,0,0,0,0,(byte) 0b10000100,0};
+        byte[] xd = new byte[]{1,0,0,0,0 ,0,0,0, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1};
+//        byte [] msg_converted = new String(msg,StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8);
+        byte [] msg_converted = Base64.getDecoder().decode(Base64.getEncoder().encodeToString(msg));
+
+        System.out.println(ByteOperations.byte_arr_to_hex(msg));
+        System.out.println(ByteOperations.byte_arr_to_string(msg));
+        System.out.println(ByteOperations.byte_arr_to_hex(msg_converted));
+//        System.out.println(ByteOperations.byte_to_string(test));
 
     }
 

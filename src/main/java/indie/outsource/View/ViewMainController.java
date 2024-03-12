@@ -114,41 +114,39 @@ public class ViewMainController {
         return ByteOperations.unpackage_msg(packages);
 
     }
+    public byte[] string_to_bytes(String string){
+        return Base64.getDecoder().decode(string);
+    }
+    public String bytes_to_string(byte[] bytes){
+        return Base64.getEncoder().encodeToString(bytes);
+    }
     public void encode(ActionEvent event) {
         if(file_mode){
             if(!is_file1_loaded){
                 load_file_1(event); //przekazanie tu eventa to kolejny peek programing
             }
-            data2 = pack_and_encode(data1);
-            file_binary_2.setText(new String(data2));
 
         }
         else{
-            data1 = file_binary_1.getText().getBytes();    //czy aby na pewno?
+            data1 = string_to_bytes(file_binary_1.getText());
         }
         data2 = pack_and_encode(data1);
-        file_binary_2.setText(new String(data2));
-
+        file_binary_2.setText(bytes_to_string(data2));
     }
 
     public void decode(ActionEvent event) {
         if(file_mode){
-//            if(!is_file2_loaded){
-//                load_file_2(event); //przekazanie tu eventa to kolejny peek programing
-//            }
-//            System.out.println(ByteOperations.byte_arr_to_string(data2));
-            data1 = decrypt_and_unpack(data2);
-            file_binary_1.setText(new String(data1));
+            if(!is_file2_loaded){
+                load_file_2(event); //przekazanie tu eventa to kolejny peek programing
+            }
         }
         else{
-            data2 = file_binary_2.getText().getBytes();    //czy aby na pewno?
-//            System.out.println("ALO!");
-//            System.out.println(new String(data2));
-//            System.out.println(ByteOperations.byte_arr_to_string(data2));
-        }
+//            data2 = file_binary_2.getText().getBytes(StandardCharsets.UTF_8);    //
+            data2 = string_to_bytes(file_binary_2.getText());
 
+        }
         data1 = decrypt_and_unpack(data2);
-        file_binary_1.setText(new String(data1));
+        file_binary_1.setText(bytes_to_string(data1));
     }
 
     public void generate_keys(ActionEvent event) {
