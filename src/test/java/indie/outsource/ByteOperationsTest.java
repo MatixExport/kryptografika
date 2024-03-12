@@ -5,14 +5,18 @@ import indie.outsource.model.DesEncoder;
 import indie.outsource.model.DesxEncoder;
 import indie.outsource.model.StolenEncoder;
 import org.junit.Assert;
+
+import java.nio.charset.Charset;
 import java.util.Base64;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
 import java.util.Collections;
 import indie.outsource.View.ViewMainController;
+import indie.outsource.model.Util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -352,13 +356,14 @@ class ByteOperationsTest {
     @Test
     void test_cipher_to_text_conversion(){
         byte test = (byte) 0b10100000;
-        byte [] msg = new byte[]{0,0,0,0,0,0,(byte) 0b10000100,0};
+        byte [] msg = new byte[]{0,0,0,0,0,0,(byte) 0b10000100,(byte) 0b11100010};
         byte[] xd = new byte[]{1,0,0,0,0 ,0,0,0, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1};
-//        byte [] msg_converted = new String(msg,StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8);
-        byte [] msg_converted = Base64.getDecoder().decode(Base64.getEncoder().encodeToString(msg));
+        Charset tested_charset = StandardCharsets.UTF_16;
+        byte [] msg_converted = Util.remove_n_first_elements(new String(msg,tested_charset).getBytes(tested_charset),2);
+//        byte [] msg_converted = Base64.getDecoder().decode(Base64.getEncoder().encodeToString(msg));
 
         System.out.println(ByteOperations.byte_arr_to_hex(msg));
-        System.out.println(ByteOperations.byte_arr_to_string(msg));
+//        System.out.println(ByteOperations.byte_arr_to_string(msg));
         System.out.println(ByteOperations.byte_arr_to_hex(msg_converted));
 //        System.out.println(ByteOperations.byte_to_string(test));
 

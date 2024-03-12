@@ -1,6 +1,7 @@
 package indie.outsource.View;
 
 import indie.outsource.model.ByteOperations;
+import indie.outsource.model.CharsetAdapter;
 import indie.outsource.model.DesEncoder;
 import indie.outsource.model.DesxEncoder;
 import javafx.event.ActionEvent;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import indie.outsource.model.charsetAdapters.*;
 
 public class ViewMainController {
     public ToggleGroup group;
@@ -36,6 +38,8 @@ public class ViewMainController {
     private byte[] data2;
     private boolean is_file1_loaded = false;
     private boolean is_file2_loaded = false;
+
+    CharsetAdapter selectedCharsetAdapter = new Utf16CharsetAdapter();
 
     byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
     byte[] xd2 = new byte[]{1,1,0,1, 0,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,1,1, 1,0,0,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
@@ -89,6 +93,8 @@ public class ViewMainController {
     }
     public byte[] pack_and_encode(byte[] content){
         byte[][] keys = get_all_keys();
+        System.out.println("ALL BEFORE ENCODING");
+        System.out.println(ByteOperations.byte_arr_to_string(content));
         byte[][] packages = ByteOperations.split_into_packages(content);
         for (int i = 0; i < packages.length; i++) {
             packages[i] = DesEncoder.encode(xd,packages[i]);
@@ -110,15 +116,18 @@ public class ViewMainController {
         for (int i = 0; i < packages.length; i++) {
             packages[i] = DesEncoder.decode(xd,packages[i]);
         }
-
+        System.out.println("LAST RECIVED BEFORE UNPACKING");
+        System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
         return ByteOperations.unpackage_msg(packages);
 
     }
     public byte[] string_to_bytes(String string){
-        return Base64.getDecoder().decode(string);
+        return selectedCharsetAdapter.string_to_byte(string);
     }
     public String bytes_to_string(byte[] bytes){
-        return Base64.getEncoder().encodeToString(bytes);
+        System.out.println("Bytes to String");
+        System.out.println(ByteOperations.byte_arr_to_string(bytes));
+        return selectedCharsetAdapter.byte_to_string(bytes);
     }
     public void encode(ActionEvent event) {
         if(file_mode){
@@ -142,10 +151,14 @@ public class ViewMainController {
         }
         else{
 //            data2 = file_binary_2.getText().getBytes(StandardCharsets.UTF_8);    //
+            System.out.println(file_binary_2.getText());
             data2 = string_to_bytes(file_binary_2.getText());
 
         }
+
         data1 = decrypt_and_unpack(data2);
+        System.out.println("ACHTUNG ");
+        System.out.println(ByteOperations.byte_arr_to_string(data2));
         file_binary_1.setText(bytes_to_string(data1));
     }
 
