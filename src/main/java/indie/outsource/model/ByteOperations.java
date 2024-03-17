@@ -64,7 +64,12 @@ public class ByteOperations {
         byte[] output = new byte[positions.length];
         int pos = 0;
         for (int position : positions) {
-            output[pos++] = get_bit_at(data, position);
+            //tymczasowo i tak cała ta funkcja jest do
+            //wywalenia
+            //ale teraz jestem w pociągu i się
+            //telepie wszystek to nie chce mi się
+            //za wiele zmieniać
+            output[pos++] = get_bit_at_berlin(data, position);
         }
         return output;
     }

@@ -87,7 +87,9 @@ public class DesEncoder {
                 12, 1, 40, 51, 30, 36, 46, 54, 29, 39, 50, 44, 32, 47, 43, 48, 38, 55, 33, 52, 45, 41, 49, 35, 28, 31};
         final int[] SHIFTS = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
-        byte[] active_part_of_key = ByteOperations.get_bytes_at_positions(key,first_key_filter);
+//        byte[] active_part_of_key = ByteOperations.get_bytes_at_positions(key,first_key_filter);
+        byte[] active_part_of_key = ByteOperations.get_bits_at_positions(key,first_key_filter);
+
         byte[] first_key_half = new byte[active_part_of_key.length/2];
         byte[] second_key_half = new byte[active_part_of_key.length/2];
 
