@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
@@ -42,7 +43,7 @@ public class ViewMainController {
     private boolean is_file1_loaded = false;
     private boolean is_file2_loaded = false;
 
-    CharsetAdapter selectedCharsetAdapter = new Utf32CharsetEncoder();
+    CharsetAdapter selectedCharsetAdapter = new ToCharCharsetAdapter();
 
     byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
     byte[] xd2 = new byte[]{1,1,0,1, 0,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,1,1, 1,0,0,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
@@ -52,7 +53,7 @@ public class ViewMainController {
     public static TextFormatter<TextFormatter.Change> hexTextFormatter()
     {
         UnaryOperator<TextFormatter.Change> hexFilter = change -> {
-            return change.getControlNewText().matches("[0-9a-fA-F]*") ? change : null;
+            return change.getControlNewText().matches("[0-9a-fA-F]{0,16}") ? change : null;
         };
         return new TextFormatter<>(hexFilter);
     }
@@ -106,7 +107,12 @@ public class ViewMainController {
         }
     }
     public byte[][] get_all_keys(){
-        return new byte[][]{xd,ByteOperations.bits_to_bytes(xd2),ByteOperations.bits_to_bytes(xd3)};
+        HexFormat hexFormat = HexFormat.of();
+        return new byte[][]{
+
+                hexFormat.parseHex(key0.getText()),
+                hexFormat.parseHex(key1.getText()),
+                hexFormat.parseHex(key2.getText())};
     }
     public byte[] pack_and_encode(byte[] content){
         byte[][] keys = get_all_keys();
@@ -114,7 +120,7 @@ public class ViewMainController {
         System.out.println(ByteOperations.byte_arr_to_string(content));
         byte[][] packages = ByteOperations.split_into_packages(content);
         for (int i = 0; i < packages.length; i++) {
-            packages[i] = DesEncoder.encode(xd,packages[i]);
+            packages[i] = DesEncoder.encode(keys[0],packages[i]);
         }
         System.out.println("LAST ENCODED:");
         System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
@@ -131,7 +137,7 @@ public class ViewMainController {
         System.out.println("LAST RECIVED TO DECODE:");
         System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
         for (int i = 0; i < packages.length; i++) {
-            packages[i] = DesEncoder.decode(xd,packages[i]);
+            packages[i] = DesEncoder.decode(keys[0],packages[i]);
         }
         System.out.println("LAST RECIVED BEFORE UNPACKING");
         System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
@@ -183,6 +189,10 @@ public class ViewMainController {
         key0.setText(Util.genereateHexString(16));
         key1.setText(Util.genereateHexString(16));
         key2.setText(Util.genereateHexString(16));
+
+        System.out.println(key0.getText());
+        byte[][] keys = get_all_keys();
+        System.out.println(ByteOperations.byte_arr_to_string(keys[0]));
     }
 
     public void select_encode_type_file(ActionEvent event) {
