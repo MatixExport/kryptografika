@@ -5,10 +5,7 @@ import indie.outsource.model.CharsetAdapter;
 import indie.outsource.model.DesEncoder;
 import indie.outsource.model.DesxEncoder;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
@@ -19,7 +16,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
+
+import  javafx.scene.control.TextFormatter;
+
 import indie.outsource.model.charsetAdapters.*;
+import indie.outsource.model.Util;
 
 public class ViewMainController {
     public ToggleGroup group;
@@ -39,12 +42,26 @@ public class ViewMainController {
     private boolean is_file1_loaded = false;
     private boolean is_file2_loaded = false;
 
-    CharsetAdapter selectedCharsetAdapter = new ToCharCharsetAdapter();
+    CharsetAdapter selectedCharsetAdapter = new Utf32CharsetEncoder();
 
     byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
     byte[] xd2 = new byte[]{1,1,0,1, 0,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,1,1, 1,0,0,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
     byte[] xd3 = new byte[]{1,0,0,1, 1,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 1,1,0,0, 0,1,0,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,0,1, 1,0,1,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
 
+
+    public static TextFormatter<TextFormatter.Change> hexTextFormatter()
+    {
+        UnaryOperator<TextFormatter.Change> hexFilter = change -> {
+            return change.getControlNewText().matches("[0-9a-fA-F]*") ? change : null;
+        };
+        return new TextFormatter<>(hexFilter);
+    }
+
+    public void initialize() {
+        key0.setTextFormatter(hexTextFormatter());
+        key1.setTextFormatter(hexTextFormatter());
+        key2.setTextFormatter(hexTextFormatter());
+    }
 
     public void load_file_1(ActionEvent event) {
         File file = select_file_load_dialog("Select file", "");
@@ -163,9 +180,9 @@ public class ViewMainController {
     }
 
     public void generate_keys(ActionEvent event) {
-        key0.setText("encoder.generate_key");
-        key1.setText("encoder.generate_key");
-        key2.setText("encoder.generate_key");
+        key0.setText(Util.genereateHexString(16));
+        key1.setText(Util.genereateHexString(16));
+        key2.setText(Util.genereateHexString(16));
     }
 
     public void select_encode_type_file(ActionEvent event) {
