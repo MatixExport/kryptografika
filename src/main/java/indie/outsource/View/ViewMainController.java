@@ -39,7 +39,7 @@ public class ViewMainController {
     private boolean is_file1_loaded = false;
     private boolean is_file2_loaded = false;
 
-    CharsetAdapter selectedCharsetAdapter = new Utf16CharsetAdapter();
+    CharsetAdapter selectedCharsetAdapter = new ToCharCharsetAdapter();
 
     byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
     byte[] xd2 = new byte[]{1,1,0,1, 0,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,1,1, 1,0,0,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};

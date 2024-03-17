@@ -228,6 +228,11 @@ public class ByteOperations {
         }
         return output;
     }
+    public static char combine_2_bytes(byte byte_1,byte byte_2){
+        return (char) ((((byte_1<< 8) & (0xFF00 )) + ((byte_2) & 0x00FF)));
+    }
+
+
 
 
 
