@@ -2,24 +2,19 @@ package indie.outsource.View;
 
 import indie.outsource.model.ByteOperations;
 import indie.outsource.model.CharsetAdapter;
-import indie.outsource.model.DesEncoder;
-import indie.outsource.model.DesxEncoder;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-import javafx.stage.Window;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HexFormat;
+import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-
+import indie.outsource.model.ViewEncodersAdapters.*;
 import  javafx.scene.control.TextFormatter;
 
 import indie.outsource.model.charsetAdapters.*;
@@ -34,6 +29,8 @@ public class ViewMainController {
     public TextField key1;
     public TextField key2;
 
+    public ComboBox<String> encoder_box;
+
     public TextArea file_binary_1;
     public TextArea file_binary_2;
 
@@ -44,10 +41,17 @@ public class ViewMainController {
     private boolean is_file2_loaded = false;
 
     CharsetAdapter selectedCharsetAdapter = new ToCharCharsetAdapter();
+    ObservableList<String> encode_options =
+            FXCollections.observableArrayList(
+                    "DES",
+                         "DESX"
+            );
+    Map<String,ViewEncoder> encoders_map =new HashMap<>() {{
+        put("DES", new DesToViewEncoderAdapter());
+        put("DESX", new DesxToViewEncoderAdapter());
+    }};
 
-    byte[] xd = new byte[]{0,0,0,1, 0,0,1,1, 0,0,1,1, 0,1,0,0, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 1,0,0,1, 1,0,1,1, 1,0,1,1, 1,1,0,0, 1,1,0,1, 1,1,1,1, 1,1,1,1, 0,0,0,1};
-    byte[] xd2 = new byte[]{1,1,0,1, 0,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 0,1,1,1, 0,1,1,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,1,1, 1,0,0,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
-    byte[] xd3 = new byte[]{1,0,0,1, 1,0,1,1, 0,0,1,1, 0,0,1,1, 0,1,0,1, 1,1,0,0, 0,1,0,1, 1,0,0,1, 0,1,1,1, 1,0,1,1, 1,0,0,1, 1,0,1,1, 1,1,0,1, 1,1,0,0, 1,1,1,1, 0,0,0,1};
+
 
 
     public static TextFormatter<TextFormatter.Change> hexTextFormatter()
@@ -62,6 +66,12 @@ public class ViewMainController {
         key0.setTextFormatter(hexTextFormatter());
         key1.setTextFormatter(hexTextFormatter());
         key2.setTextFormatter(hexTextFormatter());
+        encoder_box.setItems(encode_options);
+        encoder_box.getSelectionModel().selectFirst();
+    }
+
+    private ViewEncoder get_current_encoder(){
+        return encoders_map.get(encoder_box.getValue());
     }
 
     public void load_file_1(ActionEvent event) {
@@ -114,36 +124,6 @@ public class ViewMainController {
                 hexFormat.parseHex(key1.getText()),
                 hexFormat.parseHex(key2.getText())};
     }
-    public byte[] pack_and_encode(byte[] content){
-        byte[][] keys = get_all_keys();
-        System.out.println("ALL BEFORE ENCODING");
-        System.out.println(ByteOperations.byte_arr_to_string(content));
-        byte[][] packages = ByteOperations.split_into_packages(content);
-        for (int i = 0; i < packages.length; i++) {
-            packages[i] = DesEncoder.encode(keys[0],packages[i]);
-        }
-        System.out.println("LAST ENCODED:");
-        System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
-        byte[] temp = ByteOperations.join_byte_arr(packages);
-        System.out.println("FULL ENCODED:");
-        System.out.println(ByteOperations.byte_arr_to_string(temp));
-        return temp;
-    }
-    public byte[] decrypt_and_unpack(byte[] content){
-        byte[][] keys = get_all_keys();
-        System.out.println("FULL recived:");
-        System.out.println(ByteOperations.byte_arr_to_string(content));
-        byte[][] packages = ByteOperations.package_encrypted_msg(content);
-        System.out.println("LAST RECIVED TO DECODE:");
-        System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
-        for (int i = 0; i < packages.length; i++) {
-            packages[i] = DesEncoder.decode(keys[0],packages[i]);
-        }
-        System.out.println("LAST RECIVED BEFORE UNPACKING");
-        System.out.println(ByteOperations.byte_arr_to_string(packages[packages.length-1]));
-        return ByteOperations.unpackage_msg(packages);
-
-    }
     public byte[] string_to_bytes(String string){
         return selectedCharsetAdapter.string_to_byte(string);
     }
@@ -157,12 +137,11 @@ public class ViewMainController {
             if(!is_file1_loaded){
                 load_file_1(event); //przekazanie tu eventa to kolejny peek programing
             }
-
         }
         else{
             data1 = string_to_bytes(file_binary_1.getText());
         }
-        data2 = pack_and_encode(data1);
+        data2 = Util.pack_and_encode(get_current_encoder(),get_all_keys(),data1);
         file_binary_2.setText(bytes_to_string(data2));
     }
 
@@ -173,15 +152,10 @@ public class ViewMainController {
             }
         }
         else{
-//            data2 = file_binary_2.getText().getBytes(StandardCharsets.UTF_8);    //
-            System.out.println(file_binary_2.getText());
             data2 = string_to_bytes(file_binary_2.getText());
-
         }
 
-        data1 = decrypt_and_unpack(data2);
-        System.out.println("ACHTUNG ");
-        System.out.println(ByteOperations.byte_arr_to_string(data2));
+        data1 = Util.decrypt_and_unpack(get_current_encoder(),get_all_keys(),data2);
         file_binary_1.setText(bytes_to_string(data1));
     }
 
@@ -206,7 +180,6 @@ public class ViewMainController {
         filename2.setDisable(true);
         file_mode = false;
     }
-
 
     private File select_file_load_dialog(String title, String filename){
         FileChooser fileChooser = new FileChooser();

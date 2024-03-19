@@ -64,6 +64,7 @@
                         <TextField fx:id="filename2" prefHeight="25.0" prefWidth="101.0" GridPane.columnSpan="2" />
                      </children>
                   </GridPane>
+                  <ComboBox fx:id="encoder_box" layoutX="155.0" layoutY="57.0" prefWidth="150.0" promptText="Select Encoder" />
                </children>
             </AnchorPane>
          </center></BorderPane>
