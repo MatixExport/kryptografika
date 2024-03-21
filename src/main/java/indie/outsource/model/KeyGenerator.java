@@ -1,4 +1,5 @@
 package indie.outsource.model;
+import static indie.outsource.model.ByteOperations.*;
 
 public class KeyGenerator {
     public static byte[][] get_subkeys(byte[] key){
@@ -9,29 +10,24 @@ public class KeyGenerator {
                 12, 1, 40, 51, 30, 36, 46, 54, 29, 39, 50, 44, 32, 47, 43, 48, 38, 55, 33, 52, 45, 41, 49, 35, 28, 31};
         final int[] SHIFTS = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
-//        byte[] active_part_of_key = ByteOperations.get_bytes_at_positions(key,first_key_filter);
-        byte[] active_part_of_key = ByteOperations.get_bits_at_positions(key,first_key_filter);
 
-        byte[] first_key_half = new byte[active_part_of_key.length/2];
-        byte[] second_key_half = new byte[active_part_of_key.length/2];
+        byte[] active_part_of_key = get_bits_at_positions(key,first_key_filter);
 
 
-        System.arraycopy(active_part_of_key,0,first_key_half,0,active_part_of_key.length/2);
-        System.arraycopy(active_part_of_key,active_part_of_key.length/2,second_key_half,0,active_part_of_key.length/2);
-
+        byte[] first_key_half = split_byteArr_in_half(active_part_of_key)[0];
+        byte[] second_key_half = split_byteArr_in_half(active_part_of_key)[1];
 
         byte[][] subkeys = new byte[16][];
 
-
         for(int i=0; i<16; i++){
-            first_key_half = ByteOperations.rotate_left(first_key_half,SHIFTS[i]);
-            second_key_half = ByteOperations.rotate_left(second_key_half,SHIFTS[i]);
+            first_key_half = rotate_left(first_key_half,SHIFTS[i]);
+            second_key_half = rotate_left(second_key_half,SHIFTS[i]);
 
-            byte[] new_key = ByteOperations.join_tables(first_key_half, second_key_half);
+            byte[] new_key = join_tables(first_key_half, second_key_half);
 
-            byte[] new_filtered_key = ByteOperations.get_bytes_at_positions(new_key,second_key_filter);
+            byte[] new_filtered_key = get_bytes_at_positions(new_key,second_key_filter);
 
-            subkeys[i] = ByteOperations.bits_to_bytes(new_filtered_key);
+            subkeys[i] = bits_to_bytes(new_filtered_key);
         }
         return subkeys;
     }

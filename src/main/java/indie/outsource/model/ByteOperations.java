@@ -237,7 +237,14 @@ public class ByteOperations {
         return (char) ((((byte_1<< 8) & (0xFF00 )) + ((byte_2) & 0x00FF)));
     }
 
+    public static byte[][] split_byteArr_in_half(byte[] data) {
+        byte[][] output = new byte[2][data.length / 2];
 
+        System.arraycopy(data, 0, output[0], 0, data.length / 2);
+        System.arraycopy(data, data.length / 2, output[1], 0, data.length / 2);
+
+        return output;
+    }
 
 
 
