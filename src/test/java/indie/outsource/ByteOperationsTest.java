@@ -351,6 +351,7 @@ class ByteOperationsTest {
     void test_des(){
         byte [] msg = new byte[]{0,0,0,0,0,0,0,0};
         byte[] xd = new byte[]{1,0,0,0,0 ,0,0,0, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1, 0,0,0,0,0,0,0,1};
+        xd = ByteOperations.bits_to_bytes(xd);
         assertEquals("95a8d72813daa94d",ByteOperations.byte_arr_to_hex(DesEncoder.encode(msg,xd)));
     }
     @Test
