@@ -24,14 +24,14 @@ public class Util {
     public static byte[] pack_and_encode(ViewEncoder encoder, byte[][] keys, byte[] content){
         byte[][] packages = ByteOperations.split_into_packages(content);
         for (int i = 0; i < packages.length; i++) {
-            packages[i] = encoder.encode(keys,packages[i]);
+            packages[i] = encoder.encode(packages[i],keys);
         }
         return ByteOperations.join_byte_arr(packages);
     }
     public static byte[] decrypt_and_unpack(ViewEncoder encoder,byte[][] keys,byte[] content){
         byte[][] packages = ByteOperations.package_encrypted_msg(content);
         for (int i = 0; i < packages.length; i++) {
-            packages[i] = encoder.decode(keys,packages[i]);
+            packages[i] = encoder.decode(packages[i],keys);
         }
         return ByteOperations.unpackage_msg(packages);
     }
