@@ -3,7 +3,6 @@ import indie.outsource.model.DesEncoder;
 public class DesToViewEncoderAdapter implements ViewEncoder {
     @Override
     public byte[] encode(byte[] msg, byte[][] keys) {
-        System.out.println("DES JAK  COS");
         return DesEncoder.encode(msg, keys[0]);
     }
 

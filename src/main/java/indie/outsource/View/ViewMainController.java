@@ -128,8 +128,6 @@ public class ViewMainController {
         return selectedCharsetAdapter.string_to_byte(string);
     }
     public String bytes_to_string(byte[] bytes){
-        System.out.println("Bytes to String");
-        System.out.println(ByteOperations.byte_arr_to_string(bytes));
         return selectedCharsetAdapter.byte_to_string(bytes);
     }
     public void encode(ActionEvent event) {
