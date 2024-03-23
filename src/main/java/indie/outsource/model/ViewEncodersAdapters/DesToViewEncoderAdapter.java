@@ -8,6 +8,6 @@ public class DesToViewEncoderAdapter implements ViewEncoder {
 
     @Override
     public byte[] decode(byte[] msg, byte[][] keys) {
-        return DesEncoder.decode(keys[0],msg);
+        return DesEncoder.decode(msg,keys[0]);
     }
 }
