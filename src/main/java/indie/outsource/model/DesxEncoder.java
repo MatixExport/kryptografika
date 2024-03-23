@@ -9,6 +9,10 @@ import indie.outsource.model.ByteOperations;
 public class DesxEncoder {
 
     private static byte[] encrypt(byte[][] subkeys,byte[] k1,byte[] k2,byte[] data){
+        //DESX polega na rozszerzeniu klucza DES'a poprzez
+        //wykonanie operacji XOR używając dwóch dodatkowych 64-bitowych kluczy
+        //na danych przed i po szyfrowaniu standardowym DES'em
+
         data = ByteOperations.byte_arr_xor(data,k1);
         data = DesEncoder.encrypt(data, subkeys);
         return ByteOperations.byte_arr_xor(data,k2);

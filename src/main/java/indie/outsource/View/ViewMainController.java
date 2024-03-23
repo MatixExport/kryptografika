@@ -138,8 +138,12 @@ public class ViewMainController {
         }
         else{
             data1 = string_to_bytes(file_binary_1.getText());
+            System.out.println(ByteOperations.byte_arr_to_hex(data1));
+//            data1 = new byte[]{0,0,0,0,0,0,0,0};
         }
         data2 = Util.pack_and_encode(get_current_encoder(),get_all_keys(),data1);
+        System.out.println("ENCODED TEXT");
+        System.out.println(ByteOperations.byte_arr_to_hex(data2));
         file_binary_2.setText(bytes_to_string(data2));
     }
 
@@ -161,6 +165,7 @@ public class ViewMainController {
         key0.setText(Util.genereateHexString(16));
         key1.setText(Util.genereateHexString(16));
         key2.setText(Util.genereateHexString(16));
+
 
         System.out.println(key0.getText());
         byte[][] keys = get_all_keys();
