@@ -4,6 +4,8 @@ import indie.outsource.model.ByteOperations;
 import indie.outsource.model.DesEncoder;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DesEncoderTest {

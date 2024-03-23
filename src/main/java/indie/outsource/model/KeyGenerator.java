@@ -1,4 +1,6 @@
 package indie.outsource.model;
+
+
 import static indie.outsource.model.ByteOperations.*;
 
 public class KeyGenerator {
@@ -31,4 +33,38 @@ public class KeyGenerator {
         }
         return subkeys;
     }
+
+    public static byte[] get_bytes_at_positions(byte[] data, int[] positions) {
+        byte[] output = new byte[positions.length];
+        int pos = 0;
+        for (int position : positions) {
+            output[pos++] = get_byte_at(data, position);
+        }
+        return output;
+    }
+    public static byte get_byte_at(byte[] data, int position) {
+        return data[position];
+    }
+    public static byte[] get_bits_at_positions(byte[] data, int[] positions) {
+        byte[] output = new byte[positions.length];
+        int pos = 0;
+        for (int position : positions) {
+            //tymczasowo i tak cała ta funkcja jest do
+            //wywalenia
+            //ale teraz jestem w pociągu i się
+            //telepie wszystek to nie chce mi się
+            //za wiele zmieniać
+            output[pos++] = get_bit_at_berlin(data, position);
+        }
+        return output;
+    }
+    public static byte[] rotate_left(byte[] data, int step) {
+        byte[] output = new byte[data.length];
+        for (int i = 0; i < data.length; i++) {
+            output[i] = data[ (i + step ) % (data.length)];
+        }
+
+        return output;
+    }
+
 }
