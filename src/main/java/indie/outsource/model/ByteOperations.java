@@ -1,26 +1,12 @@
 package indie.outsource.model;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static java.lang.Math.ceil;
 
 public class ByteOperations {
 
-    public static byte get_byte_at(byte[] data, int position) {
-        return data[position];
-    }
-    public static byte get_bit_at(byte[] data, int position) {
-        int byte_position = position / 8;
-        int bit_position = position % 8;
-        byte selected_byte = data[byte_position];
-        int bit_value = selected_byte >> bit_position & 1;
-        return (byte) bit_value;
-    }
-
-    //ja już nie wiem jak to ma działać
-    //zakładamy że bit 0 jest od lewej
-    //tak ci z berlina zrobili
-    //?chyba?
     public static byte get_bit_at_berlin(byte[] data, int position) {
         int byte_position = position / 8;
         int bit_position = position % 8;
@@ -39,27 +25,7 @@ public class ByteOperations {
         }
         data[byte_position] |= (byte) (1 << bit_position);
     }
-    public static void set_bit_at_index_little_endian(byte[] data, int position,int value) {
-        int byte_position = position / 8;
-        int bit_position = position % 8;
-        byte selected_byte = data[byte_position];
-        if(value == 0){
-            data[byte_position]  &= (byte) ~(1 << (7- bit_position));
-            return;
-        }
-        data[byte_position] |= (byte) (1 << (7 - bit_position));
-    }
 
-
-    public static byte[] get_bytes_at_positions(byte[] data, int[] positions) {
-        byte[] output = new byte[positions.length];
-        int pos = 0;
-        for (int position : positions) {
-            output[pos++] = get_byte_at(data, position);
-
-        }
-        return output;
-    }
     public static byte[] get_bits_at_positions(byte[] data, int[] positions) {
         byte[] output = new byte[positions.length];
         int pos = 0;
@@ -99,11 +65,6 @@ public class ByteOperations {
     }
 
     public static byte[] bits_to_bytes(byte[] in){
-        //teraz bity są ustawione tak jak się je czyta
-        //czyli najmniejsze są po prawo
-        //zrobiłem tak bo wcześniej java traktowała
-        //nasze przekonwertowane {0,0,0,0,0,0,0,1}
-        //jako -128 zamiast 1
         int new_len = (int) ceil((double) in.length / 8);
 
         byte[] output = new byte[new_len];
@@ -111,22 +72,11 @@ public class ByteOperations {
         for (int i=0;i<in.length;i++){
             set_bit_at_index(output,in.length -i -1,in[i]);
         }
-        //jest 4 rano i już nie chce mi się nawet myśleć
-        //jak to optymalnie zrobić
-        output = reverseArr(output);
-
+//        Collections.reverse(Arrays.asList(output));
+        reverseArr(output);
         return output;
     }
-    public static byte[] bits_to_bytes_little_endian(byte[] in){
-        int new_len = (int) ceil((double) in.length / 8);
-        byte[] output = new byte[new_len];
 
-        for (int i=0;i<in.length;i++){
-            set_bit_at_index_little_endian(output,i,in[i]);
-        }
-
-        return output;
-    }
     public static byte[] reverseArr(byte[] arr){
         byte temp;
         for (int i = 0; i < (int) (arr.length / 2); i++) {
@@ -148,17 +98,7 @@ public class ByteOperations {
         }
         return bits.toString();
     }
-    public static byte[] byte_string_to_byte(String byte_str){
-        int len = (int) ceil((double) byte_str.length() / 8);
-        byte[] output = new byte[len];
-        int position = 0;
 
-        for (char ch: byte_str.toCharArray()) {
-
-            set_bit_at_index(output,position++,ch == '1' ? 1:0);
-        }
-        return output;
-    }
     public static byte[] byte_arr_xor(byte[] in1, byte[] in2){
         byte[] output = new byte[in1.length];
         for (int i = 0; i < in1.length; i++) {
