@@ -1,7 +1,10 @@
 package indie.outsource.model;
 
 
-import static indie.outsource.model.ByteOperations.*;
+import static indie.outsource.model.ByteOperations.bits_to_bytes;
+import static indie.outsource.model.ByteOperations.split_byteArr_in_half;
+import static indie.outsource.model.ByteOperations.join_tables;
+import static indie.outsource.model.ByteOperations.get_bit_at_berlin;
 
 public class KeyGenerator {
     public static byte[][] get_subkeys(byte[] key){
@@ -57,11 +60,6 @@ public class KeyGenerator {
         byte[] output = new byte[positions.length];
         int pos = 0;
         for (int position : positions) {
-            //tymczasowo i tak cała ta funkcja jest do
-            //wywalenia
-            //ale teraz jestem w pociągu i się
-            //telepie wszystek to nie chce mi się
-            //za wiele zmieniać
             output[pos++] = get_bit_at_berlin(data, position);
         }
         return output;
