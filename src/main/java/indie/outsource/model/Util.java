@@ -18,46 +18,40 @@ public class Util {
 
 
     public static byte[] pack_and_encode(ViewEncoder encoder, byte[][] keys, byte[] content) {
-        byte[][] packages = split_into_packages(content);
+        byte[][] packages = split_into_packages(content, (content.length / 8) + 1);
+        add_padding(packages[packages.length - 1], content.length % 8);
+
         for (int i = 0; i < packages.length; i++) {
             packages[i] = encoder.encode(packages[i], keys);
         }
         return ByteOperations.join_byte_arr(packages);
     }
-    public static byte[][] split_into_packages(byte[] content) {
-        int len = (content.length / 8) + 1;
-        byte[][] packages = new byte[len][8];
+    public static byte[][] split_into_packages(byte[] content, int length) {
+        byte[][] packages = new byte[length][8];
 
         for  (int i = 0; i < content.length; i++) {
             packages[i / 8][i % 8] = content[i];
         }
 
-        int supplement = content.length % 8;
-        byte supplement_int = (byte) (8 - supplement);
-        for (int j = supplement; j < 8; j++) {
-            packages[content.length / 8][j] =  supplement_int;
-        }
         return packages;
+    }
+    public static byte[] add_padding(byte[] data, int supplement){
+        for (int j = supplement; j < 8; j++) {
+            data[j] = (byte) (8 - supplement);
+        }
+        return data;
     }
 
     public static byte[] decrypt_and_unpack(ViewEncoder encoder, byte[][] keys, byte[] content) {
-        byte[][] packages = package_encrypted_msg(content);
+        byte[][] packages = split_into_packages(content, content.length / 8);
         for (int i = 0; i < packages.length; i++) {
             packages[i] = encoder.decode(packages[i], keys);
         }
-        return unpackage_msg(packages);
+        return remove_padding(packages);
     }
 
-    public static byte[][] package_encrypted_msg(byte[] msg) {
-        int len = msg.length / 8;
-        byte[][] output = new byte[len][8];
-        for (int i = 0; i < len; i++) {
-            System.arraycopy(msg, i * 8, output[i], 0, 8);
-        }
-        return output;
-    }
 
-    public static byte[] unpackage_msg(byte[][] packages) {
+    public static byte[] remove_padding(byte[][] packages) {
         int last_byte = packages[packages.length - 1][7];
         int size = (packages.length * 8) - last_byte;
         byte[] output = new byte[size];
@@ -67,6 +61,8 @@ public class Util {
         }
         return output;
     }
+
+
 
 
 }
