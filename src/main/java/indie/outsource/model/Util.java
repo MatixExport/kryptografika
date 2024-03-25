@@ -3,13 +3,6 @@ package indie.outsource.model;
 import indie.outsource.model.ViewEncodersAdapters.ViewEncoder;
 
 public class Util {
-    public static byte[] remove_n_first_elements(byte[] arr, int n) {
-        byte[] output = new byte[arr.length - n];
-        System.arraycopy(arr, n, output, 0, arr.length - n);
-        return output;
-    }
-
-
 
     public static String genereateHexString(int len) {
         String digits = "0123456789ABCDEF";
