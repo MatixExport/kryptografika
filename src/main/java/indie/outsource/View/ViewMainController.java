@@ -142,14 +142,14 @@ public class ViewMainController {
             if (!is_file1_loaded) {
                 load_file_1();
             }
+            data2 = Util.pack_and_encode(get_current_encoder(), get_all_keys(), data1);
+            file_binary_2.setText(new String(data2));
         } else {
             data1 = string_to_bytes(file_binary_1.getText());
-            System.out.println(ByteOperations.byte_arr_to_hex(data1));
+            data2 = Util.pack_and_encode(get_current_encoder(), get_all_keys(), data1);
+            file_binary_2.setText(bytes_to_string(data2));
         }
-        data2 = Util.pack_and_encode(get_current_encoder(), get_all_keys(), data1);
-        System.out.println("ENCODED TEXT");
-        System.out.println(ByteOperations.byte_arr_to_hex(data2));
-        file_binary_2.setText(bytes_to_string(data2));
+
     }
 
     @FXML
@@ -158,12 +158,13 @@ public class ViewMainController {
             if (!is_file2_loaded) {
                 load_file_2();
             }
+            data1 = Util.decrypt_and_unpack(get_current_encoder(), get_all_keys(), data2);
+            file_binary_1.setText(new String(data1));
         } else {
             data2 = string_to_bytes(file_binary_2.getText());
+            data1 = Util.decrypt_and_unpack(get_current_encoder(), get_all_keys(), data2);
+            file_binary_1.setText(bytes_to_string(data1));
         }
-
-        data1 = Util.decrypt_and_unpack(get_current_encoder(), get_all_keys(), data2);
-        file_binary_1.setText(bytes_to_string(data1));
     }
 
     private ViewEncoder get_current_encoder() {
