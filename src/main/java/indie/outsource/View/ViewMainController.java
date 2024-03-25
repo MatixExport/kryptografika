@@ -2,26 +2,22 @@ package indie.outsource.View;
 
 import indie.outsource.model.ByteOperations;
 import indie.outsource.model.CharsetAdapter;
+import indie.outsource.model.Util;
+import indie.outsource.model.ViewEncodersAdapters.DesToViewEncoderAdapter;
+import indie.outsource.model.ViewEncodersAdapters.DesxToViewEncoderAdapter;
+import indie.outsource.model.ViewEncodersAdapters.ViewEncoder;
+import indie.outsource.model.charsetAdapters.ToCharCharsetAdapter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
-import indie.outsource.model.ViewEncodersAdapters.*;
-import  javafx.scene.control.TextFormatter;
-
-import indie.outsource.model.charsetAdapters.*;
-import indie.outsource.model.Util;
-import javafx.stage.Stage;
 
 public class ViewMainController {
     public ToggleGroup group;
@@ -46,19 +42,15 @@ public class ViewMainController {
     CharsetAdapter selectedCharsetAdapter = new ToCharCharsetAdapter();
     ObservableList<String> encode_options =
             FXCollections.observableArrayList(
-                    "DES",
-                         "DESX"
+                    "DES", "DESX"
             );
-    Map<String,ViewEncoder> encoders_map =new HashMap<>() {{
+    Map<String, ViewEncoder> encoders_map = new HashMap<>() {{
         put("DES", new DesToViewEncoderAdapter());
         put("DESX", new DesxToViewEncoderAdapter());
     }};
 
 
-
-
-    public static TextFormatter<TextFormatter.Change> hexTextFormatter()
-    {
+    public static TextFormatter<TextFormatter.Change> hexTextFormatter() {
         UnaryOperator<TextFormatter.Change> hexFilter = change -> {
             return change.getControlNewText().matches("[0-9a-fA-F]{0,16}") ? change : null;
         };
@@ -71,9 +63,10 @@ public class ViewMainController {
         key2.setTextFormatter(hexTextFormatter());
         encoder_box.setItems(encode_options);
         encoder_box.getSelectionModel().selectFirst();
+        generate_keys();
     }
 
-    private ViewEncoder get_current_encoder(){
+    private ViewEncoder get_current_encoder() {
         return encoders_map.get(encoder_box.getValue());
     }
 
@@ -93,11 +86,12 @@ public class ViewMainController {
         File file = select_file_save_dialog("Save file", "");
         try {
             Files.createFile(file.toPath());
-            Files.write(file.toPath(),data1);
+            Files.write(file.toPath(), data1);
         } catch (Exception e) {
             new GuiEcxeption(Arrays.toString(e.getStackTrace()));
         }
     }
+
     public void load_file_2(ActionEvent event) {
         File file = select_file_load_dialog("Select file", "");
         filename2.setText(String.valueOf(file.toURI()));
@@ -114,21 +108,21 @@ public class ViewMainController {
         File file = select_file_save_dialog("Save file", "");
         try {
             Files.createFile(file.toPath());
-            Files.write(file.toPath(),data2);
+            Files.write(file.toPath(), data2);
         } catch (Exception e) {
             new GuiEcxeption(Arrays.toString(e.getStackTrace()));
         }
     }
-    public byte[][] get_all_keys(){
+
+    public byte[][] get_all_keys() {
         HexFormat hexFormat = HexFormat.of();
 
-        if(Objects.equals(encoder_box.getValue(), "DES")){
-            if(key0.getText().length()<16){
+        if (Objects.equals(encoder_box.getValue(), "DES")) {
+            if (key0.getText().length() < 16) {
                 new GuiEcxeption("At least one of the keys is missing or has wrong length.");
             }
-        }
-        else{
-        if(key0.getText().length()<16 | key1.getText().length()<16 | key2.getText().length()<16){
+        } else {
+            if (key0.getText().length() < 16 | key1.getText().length() < 16 | key2.getText().length() < 16) {
                 new GuiEcxeption("At least one of the keys is missing or has wrong length.");
             }
         }
@@ -141,44 +135,45 @@ public class ViewMainController {
         };
 
     }
-    public byte[] string_to_bytes(String string){
+
+    public byte[] string_to_bytes(String string) {
         return selectedCharsetAdapter.string_to_byte(string);
     }
-    public String bytes_to_string(byte[] bytes){
+
+    public String bytes_to_string(byte[] bytes) {
         return selectedCharsetAdapter.byte_to_string(bytes);
     }
+
     public void encode(ActionEvent event) {
-        if(file_mode){
-            if(!is_file1_loaded){
+        if (file_mode) {
+            if (!is_file1_loaded) {
                 load_file_1(event); //przekazanie tu eventa to kolejny peek programing
             }
-        }
-        else{
+        } else {
             data1 = string_to_bytes(file_binary_1.getText());
             System.out.println(ByteOperations.byte_arr_to_hex(data1));
 //            data1 = new byte[]{0,0,0,0,0,0,0,0};
         }
-        data2 = Util.pack_and_encode(get_current_encoder(),get_all_keys(),data1);
+        data2 = Util.pack_and_encode(get_current_encoder(), get_all_keys(), data1);
         System.out.println("ENCODED TEXT");
         System.out.println(ByteOperations.byte_arr_to_hex(data2));
         file_binary_2.setText(bytes_to_string(data2));
     }
 
     public void decode(ActionEvent event) {
-        if(file_mode){
-            if(!is_file2_loaded){
+        if (file_mode) {
+            if (!is_file2_loaded) {
                 load_file_2(event);
             }
-        }
-        else{
+        } else {
             data2 = string_to_bytes(file_binary_2.getText());
         }
 
-        data1 = Util.decrypt_and_unpack(get_current_encoder(),get_all_keys(),data2);
+        data1 = Util.decrypt_and_unpack(get_current_encoder(), get_all_keys(), data2);
         file_binary_1.setText(bytes_to_string(data1));
     }
 
-    public void generate_keys(ActionEvent event) {
+    public void generate_keys() {
         key0.setText(Util.genereateHexString(16));
         key1.setText(Util.genereateHexString(16));
         key2.setText(Util.genereateHexString(16));
@@ -196,13 +191,14 @@ public class ViewMainController {
         file_mode = false;
     }
 
-    private File select_file_load_dialog(String title, String filename){
+    private File select_file_load_dialog(String title, String filename) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.setInitialFileName(filename);
         return fileChooser.showOpenDialog(load_file_1.getScene().getWindow());
     }
-    private File select_file_save_dialog(String title, String filename){
+
+    private File select_file_save_dialog(String title, String filename) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.setInitialFileName(filename);
