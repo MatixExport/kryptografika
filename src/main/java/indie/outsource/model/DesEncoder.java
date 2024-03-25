@@ -7,7 +7,7 @@ import java.util.Collections;
             Autorzy
 NAZWISKO    IMIE    INDEX
 Giełczyński Mateusz 247662
-Kubiś       JAKUB   247712
+Kubiś       Jakub  247712
  */
 
 public class DesEncoder {
