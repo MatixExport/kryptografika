@@ -9,7 +9,7 @@ import indie.outsource.model.ViewEncodersAdapters.ViewEncoder;
 import indie.outsource.model.charsetAdapters.ToCharCharsetAdapter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
@@ -20,6 +20,8 @@ import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class ViewMainController {
+
+    //region fxml controls
     public ToggleGroup group;
     public TextField filename1;
     public TextField filename2;
@@ -33,6 +35,8 @@ public class ViewMainController {
     public TextArea file_binary_1;
     public TextArea file_binary_2;
 
+    //endregion
+    //region vars
     private boolean file_mode = true;
     private byte[] data1;
     private byte[] data2;
@@ -49,14 +53,8 @@ public class ViewMainController {
         put("DESX", new DesxToViewEncoderAdapter());
     }};
 
-
-    public static TextFormatter<TextFormatter.Change> hexTextFormatter() {
-        UnaryOperator<TextFormatter.Change> hexFilter = change -> {
-            return change.getControlNewText().matches("[0-9a-fA-F]{0,16}") ? change : null;
-        };
-        return new TextFormatter<>(hexFilter);
-    }
-
+    //endregion
+    //region init
     public void initialize() {
         key0.setTextFormatter(hexTextFormatter());
         key1.setTextFormatter(hexTextFormatter());
@@ -66,11 +64,16 @@ public class ViewMainController {
         generate_keys();
     }
 
-    private ViewEncoder get_current_encoder() {
-        return encoders_map.get(encoder_box.getValue());
+    public static TextFormatter<TextFormatter.Change> hexTextFormatter() {
+        UnaryOperator<TextFormatter.Change> hexFilter = change -> {
+            return change.getControlNewText().matches("[0-9a-fA-F]{0,16}") ? change : null;
+        };
+        return new TextFormatter<>(hexFilter);
     }
-
-    public void load_file_1(ActionEvent event) {
+    //endregion
+    //region file load/save
+    @FXML
+    private void load_file_1() {
         File file = select_file_load_dialog("Select file", "");
         filename1.setText(String.valueOf(file.toURI()));
         try {
@@ -82,7 +85,8 @@ public class ViewMainController {
         is_file1_loaded = true;
     }
 
-    public void save_file_1(ActionEvent event) {
+    @FXML
+    private void save_file_1() {
         File file = select_file_save_dialog("Save file", "");
         try {
             Files.createFile(file.toPath());
@@ -92,7 +96,8 @@ public class ViewMainController {
         }
     }
 
-    public void load_file_2(ActionEvent event) {
+    @FXML
+    private void load_file_2() {
         File file = select_file_load_dialog("Select file", "");
         filename2.setText(String.valueOf(file.toURI()));
         try {
@@ -104,7 +109,8 @@ public class ViewMainController {
         is_file2_loaded = true;
     }
 
-    public void save_file_2(ActionEvent event) {
+    @FXML
+    private void save_file_2() {
         File file = select_file_save_dialog("Save file", "");
         try {
             Files.createFile(file.toPath());
@@ -112,83 +118,6 @@ public class ViewMainController {
         } catch (Exception e) {
             new GuiEcxeption(Arrays.toString(e.getStackTrace()));
         }
-    }
-
-    public byte[][] get_all_keys() {
-        HexFormat hexFormat = HexFormat.of();
-
-        if (Objects.equals(encoder_box.getValue(), "DES")) {
-            if (key0.getText().length() < 16) {
-                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
-            }
-        } else {
-            if (key0.getText().length() < 16 | key1.getText().length() < 16 | key2.getText().length() < 16) {
-                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
-            }
-        }
-
-
-        return new byte[][]{
-                hexFormat.parseHex(key0.getText()),
-                hexFormat.parseHex(key1.getText()),
-                hexFormat.parseHex(key2.getText())
-        };
-
-    }
-
-    public byte[] string_to_bytes(String string) {
-        return selectedCharsetAdapter.string_to_byte(string);
-    }
-
-    public String bytes_to_string(byte[] bytes) {
-        return selectedCharsetAdapter.byte_to_string(bytes);
-    }
-
-    public void encode(ActionEvent event) {
-        if (file_mode) {
-            if (!is_file1_loaded) {
-                load_file_1(event); //przekazanie tu eventa to kolejny peek programing
-            }
-        } else {
-            data1 = string_to_bytes(file_binary_1.getText());
-            System.out.println(ByteOperations.byte_arr_to_hex(data1));
-//            data1 = new byte[]{0,0,0,0,0,0,0,0};
-        }
-        data2 = Util.pack_and_encode(get_current_encoder(), get_all_keys(), data1);
-        System.out.println("ENCODED TEXT");
-        System.out.println(ByteOperations.byte_arr_to_hex(data2));
-        file_binary_2.setText(bytes_to_string(data2));
-    }
-
-    public void decode(ActionEvent event) {
-        if (file_mode) {
-            if (!is_file2_loaded) {
-                load_file_2(event);
-            }
-        } else {
-            data2 = string_to_bytes(file_binary_2.getText());
-        }
-
-        data1 = Util.decrypt_and_unpack(get_current_encoder(), get_all_keys(), data2);
-        file_binary_1.setText(bytes_to_string(data1));
-    }
-
-    public void generate_keys() {
-        key0.setText(Util.genereateHexString(16));
-        key1.setText(Util.genereateHexString(16));
-        key2.setText(Util.genereateHexString(16));
-    }
-
-    public void select_encode_type_file(ActionEvent event) {
-        filename1.setDisable(false);
-        filename2.setDisable(false);
-        file_mode = true;
-    }
-
-    public void select_encode_type_text(ActionEvent event) {
-        filename1.setDisable(true);
-        filename2.setDisable(true);
-        file_mode = false;
     }
 
     private File select_file_load_dialog(String title, String filename) {
@@ -204,4 +133,94 @@ public class ViewMainController {
         fileChooser.setInitialFileName(filename);
         return fileChooser.showSaveDialog(load_file_1.getScene().getWindow());
     }
+
+    //endregion
+    //region encode/decode
+    @FXML
+    private void encode() {
+        if (file_mode) {
+            if (!is_file1_loaded) {
+                load_file_1();
+            }
+        } else {
+            data1 = string_to_bytes(file_binary_1.getText());
+            System.out.println(ByteOperations.byte_arr_to_hex(data1));
+        }
+        data2 = Util.pack_and_encode(get_current_encoder(), get_all_keys(), data1);
+        System.out.println("ENCODED TEXT");
+        System.out.println(ByteOperations.byte_arr_to_hex(data2));
+        file_binary_2.setText(bytes_to_string(data2));
+    }
+
+    @FXML
+    private void decode() {
+        if (file_mode) {
+            if (!is_file2_loaded) {
+                load_file_2();
+            }
+        } else {
+            data2 = string_to_bytes(file_binary_2.getText());
+        }
+
+        data1 = Util.decrypt_and_unpack(get_current_encoder(), get_all_keys(), data2);
+        file_binary_1.setText(bytes_to_string(data1));
+    }
+
+    private ViewEncoder get_current_encoder() {
+        return encoders_map.get(encoder_box.getValue());
+    }
+    //endregion
+    //region keys
+    public byte[][] get_all_keys() {
+        HexFormat hexFormat = HexFormat.of();
+
+        if (Objects.equals(encoder_box.getValue(), "DES")) {
+            if (key0.getText().length() < 16) {
+                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
+            }
+        } else {
+            if (key0.getText().length() < 16 | key1.getText().length() < 16 | key2.getText().length() < 16) {
+                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
+            }
+        }
+
+        return new byte[][]{
+                hexFormat.parseHex(key0.getText()),
+                hexFormat.parseHex(key1.getText()),
+                hexFormat.parseHex(key2.getText())
+        };
+
+    }
+
+    public void generate_keys() {
+        key0.setText(Util.genereateHexString(16));
+        key1.setText(Util.genereateHexString(16));
+        key2.setText(Util.genereateHexString(16));
+    }
+    //endregion
+    //region other
+    public byte[] string_to_bytes(String string) {
+        return selectedCharsetAdapter.string_to_byte(string);
+    }
+
+    public String bytes_to_string(byte[] bytes) {
+        return selectedCharsetAdapter.byte_to_string(bytes);
+    }
+
+
+    @FXML
+    private void select_encode_type_file() {
+        filename1.setDisable(false);
+        filename2.setDisable(false);
+        file_mode = true;
+    }
+
+    @FXML
+    private void select_encode_type_text() {
+        filename1.setDisable(true);
+        filename2.setDisable(true);
+        file_mode = false;
+    }
+    //endregion
+
 }
