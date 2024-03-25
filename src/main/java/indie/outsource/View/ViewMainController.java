@@ -5,7 +5,9 @@ import indie.outsource.model.CharsetAdapter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +21,7 @@ import  javafx.scene.control.TextFormatter;
 
 import indie.outsource.model.charsetAdapters.*;
 import indie.outsource.model.Util;
+import javafx.stage.Stage;
 
 public class ViewMainController {
     public ToggleGroup group;
@@ -79,8 +82,8 @@ public class ViewMainController {
         filename1.setText(String.valueOf(file.toURI()));
         try {
             data1 = Files.readAllBytes(Paths.get(file.toURI()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
         }
         file_binary_1.setText(new String(data1));
         is_file1_loaded = true;
@@ -91,8 +94,8 @@ public class ViewMainController {
         try {
             Files.createFile(file.toPath());
             Files.write(file.toPath(),data1);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
         }
     }
     public void load_file_2(ActionEvent event) {
@@ -100,8 +103,8 @@ public class ViewMainController {
         filename2.setText(String.valueOf(file.toURI()));
         try {
             data2 = Files.readAllBytes(Paths.get(file.toURI()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
         }
         file_binary_2.setText(new String(data2));
         is_file2_loaded = true;
@@ -112,17 +115,31 @@ public class ViewMainController {
         try {
             Files.createFile(file.toPath());
             Files.write(file.toPath(),data2);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
         }
     }
     public byte[][] get_all_keys(){
         HexFormat hexFormat = HexFormat.of();
-        return new byte[][]{
 
+        if(Objects.equals(encoder_box.getValue(), "DES")){
+            if(key0.getText().length()<16){
+                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
+            }
+        }
+        else{
+        if(key0.getText().length()<16 | key1.getText().length()<16 | key2.getText().length()<16){
+                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
+            }
+        }
+
+
+        return new byte[][]{
                 hexFormat.parseHex(key0.getText()),
                 hexFormat.parseHex(key1.getText()),
-                hexFormat.parseHex(key2.getText())};
+                hexFormat.parseHex(key2.getText())
+        };
+
     }
     public byte[] string_to_bytes(String string){
         return selectedCharsetAdapter.string_to_byte(string);
@@ -150,7 +167,7 @@ public class ViewMainController {
     public void decode(ActionEvent event) {
         if(file_mode){
             if(!is_file2_loaded){
-                load_file_2(event); //przekazanie tu eventa to kolejny peek programing
+                load_file_2(event);
             }
         }
         else{
@@ -162,6 +179,8 @@ public class ViewMainController {
     }
 
     public void generate_keys(ActionEvent event) {
+
+
         key0.setText(Util.genereateHexString(16));
         key1.setText(Util.genereateHexString(16));
         key2.setText(Util.genereateHexString(16));
