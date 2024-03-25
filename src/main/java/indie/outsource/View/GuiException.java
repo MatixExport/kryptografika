@@ -1,13 +1,12 @@
 package indie.outsource.View;
 
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class GuiEcxeption {
-    public GuiEcxeption(String text) {
+public class GuiException {
+    public GuiException(String text) {
         TextArea textArea = new TextArea(text);
 
         BorderPane borderPane = new BorderPane(textArea);

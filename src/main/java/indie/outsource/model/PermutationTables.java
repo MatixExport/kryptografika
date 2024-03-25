@@ -36,8 +36,7 @@ public class PermutationTables {
                             {7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8,},
                             {2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11}}
             };
-    //to przepisałem manualnie z prezentacji więc pewnie jest coś źle(np kierunek
-    //bo nie odróżniam lewej od prawej)
+
     static final int[] r_permutation_table = {31,0,1,2,3,4,3,4,5,6,7,8,7,8,9,10,11,12,11,
             12,13,14,15,16,15,16,17,18,19,20,19,20,21,22,23,24,23,24,25,26,27,28,27,28,29,30,
             31,0};
