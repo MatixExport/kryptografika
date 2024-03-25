@@ -64,22 +64,8 @@ public class Util {
         return output;
     }
 
-    public static boolean check_n_last_bytes(byte[] byte_package, int n, int value) {
-        int len = byte_package.length;
-        boolean valid = true;
-        for (int i = len - 1; i > len - n && i > 0; i--) {
-            valid = (byte_package[i] == (byte) value);
-        }
-        return valid;
-    }
-
     public static byte[] unpackage_msg(byte[][] packages) {
         int last_byte = packages[packages.length - 1][7];
-        //tymczasowo, to ma znaczenie tylko przy nieprawidłowych
-        //komunikatach a teraz utf-16 je zniekształca więc akurat
-        if (!check_n_last_bytes(packages[packages.length - 1], last_byte, last_byte)) {
-            last_byte = 0;
-        }
         int size = (packages.length * 8) - last_byte;
         byte[] output = new byte[size];
         for (int i = 0; i < size; i++) {
