@@ -79,7 +79,7 @@ public class ViewMainController {
         try {
             data1 = Files.readAllBytes(Paths.get(file.toURI()));
         } catch (Exception e) {
-            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
+            new GuiException(Arrays.toString(e.getStackTrace()));
         }
         file_binary_1.setText(new String(data1));
         is_file1_loaded = true;
@@ -92,7 +92,7 @@ public class ViewMainController {
             Files.createFile(file.toPath());
             Files.write(file.toPath(), data1);
         } catch (Exception e) {
-            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
+            new GuiException(Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -103,7 +103,7 @@ public class ViewMainController {
         try {
             data2 = Files.readAllBytes(Paths.get(file.toURI()));
         } catch (Exception e) {
-            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
+            new GuiException(Arrays.toString(e.getStackTrace()));
         }
         file_binary_2.setText(new String(data2));
         is_file2_loaded = true;
@@ -116,7 +116,7 @@ public class ViewMainController {
             Files.createFile(file.toPath());
             Files.write(file.toPath(), data2);
         } catch (Exception e) {
-            new GuiEcxeption(Arrays.toString(e.getStackTrace()));
+            new GuiException(Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -176,11 +176,11 @@ public class ViewMainController {
 
         if (Objects.equals(encoder_box.getValue(), "DES")) {
             if (key0.getText().length() < 16) {
-                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
+                new GuiException("At least one of the keys is missing or has wrong length.");
             }
         } else {
             if (key0.getText().length() < 16 | key1.getText().length() < 16 | key2.getText().length() < 16) {
-                new GuiEcxeption("At least one of the keys is missing or has wrong length.");
+                new GuiException("At least one of the keys is missing or has wrong length.");
             }
         }
 

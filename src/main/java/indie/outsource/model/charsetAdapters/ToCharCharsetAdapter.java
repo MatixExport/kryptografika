@@ -1,13 +1,11 @@
 package indie.outsource.model.charsetAdapters;
 
 import indie.outsource.model.CharsetAdapter;
-import indie.outsource.model.ByteOperations;
 
 public class ToCharCharsetAdapter implements CharsetAdapter {
     @Override
     public String byte_to_string(byte[] bytes) {
 
-        //bytes.length >> 1 = floor(bytes.length.2)
         //we do this because char has 2 bytes
         char[] chars = new char[bytes.length >> 1];
         int position = 0;

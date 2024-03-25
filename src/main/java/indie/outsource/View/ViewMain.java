@@ -7,9 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.ResourceBundle;
 
 public class ViewMain extends Application{
     private Parent loadFxml() {
@@ -17,7 +15,6 @@ public class ViewMain extends Application{
             return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/mainForm.fxml")));
         } catch (IOException e) {
             throw new RuntimeException(e);
-            // kolejny peek programing z naszej strony
         }
     }
 
