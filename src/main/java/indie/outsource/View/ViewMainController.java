@@ -179,16 +179,9 @@ public class ViewMainController {
     }
 
     public void generate_keys(ActionEvent event) {
-
-
         key0.setText(Util.genereateHexString(16));
         key1.setText(Util.genereateHexString(16));
         key2.setText(Util.genereateHexString(16));
-
-
-        System.out.println(key0.getText());
-        byte[][] keys = get_all_keys();
-        System.out.println(ByteOperations.byte_arr_to_string(keys[0]));
     }
 
     public void select_encode_type_file(ActionEvent event) {

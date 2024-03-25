@@ -38,7 +38,7 @@ public class DesEncoder {
 
 
     private static byte[] permute(byte[] data, int[] permutation_table) {
-        return ByteOperations.get_bits_at_positions_berlin(data, permutation_table);
+        return ByteOperations.get_bits_at_positions(data, permutation_table);
     }
 
 
@@ -78,8 +78,8 @@ public class DesEncoder {
 
         //odczytujemy wartości z sboksa dla 8 grup po 6 bitów z prawej częsci danych
         for (int j = 0; j < 8; j += 1) {
-            byte[] row_indexes = ByteOperations.get_bits_at_positions_berlin(right_data, new int[]{j * 6, j * 6 + 5});
-            byte[] column_indexes = ByteOperations.get_bits_at_positions_berlin(right_data, new int[]{j * 6 + 1, j * 6 + 2, j * 6 + 3, j * 6 + 4});
+            byte[] row_indexes = ByteOperations.get_bits_at_positions(right_data, new int[]{j * 6, j * 6 + 5});
+            byte[] column_indexes = ByteOperations.get_bits_at_positions(right_data, new int[]{j * 6 + 1, j * 6 + 2, j * 6 + 3, j * 6 + 4});
             sbox_result[j] = PermutationTables.sBox[j][row_indexes[0]][column_indexes[0]];
         }
         //łaczymy odczytanie 8 grup 4 bitów w pełnie bajty
@@ -90,5 +90,5 @@ public class DesEncoder {
 
         return new_right_data;
     }
-    
+
 }
