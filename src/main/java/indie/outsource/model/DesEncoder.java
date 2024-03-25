@@ -3,6 +3,13 @@ package indie.outsource.model;
 import java.util.Arrays;
 import java.util.Collections;
 
+/*
+            Autorzy
+NAZWISKO    IMIE    INDEX
+Giełczyński Mateusz 247662
+Kubiś       JAKUB   247712
+ */
+
 public class DesEncoder {
     public static byte[] encode(byte[] data, byte[] key) {
         byte[][] subkeys = KeyGenerator.get_subkeys(key);

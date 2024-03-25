@@ -5,7 +5,12 @@ import java.util.Collections;
 
 import indie.outsource.model.DesEncoder;
 import indie.outsource.model.ByteOperations;
-
+/*
+            Autorzy
+NAZWISKO    IMIE    INDEX
+Giełczyński Mateusz 247662
+Kubiś       JAKUB   247712
+ */
 
 public class DesxEncoder {
 

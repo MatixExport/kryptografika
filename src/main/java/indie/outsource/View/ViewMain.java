@@ -8,6 +8,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Objects;
+/*
+            Autorzy
+NAZWISKO    IMIE    INDEX
+Giełczyński Mateusz 247662
+Kubiś       JAKUB   247712
+ */
 
 public class ViewMain extends Application{
     private Parent loadFxml() {
